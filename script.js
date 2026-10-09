@@ -1,385 +1,485 @@
-/* ==========================================
-   MEMEAI STUDIO
-   Fixed Canvas + Funny Cartoon + Captions
-   No API key required
-   ========================================== */
-"use strict";
-const canvas = document.getElementById("memeCanvas");
-const ctx = canvas ? canvas.getContext("2d") : null;
-const $ = (id) => document.getElementById(id);
-let uploadedImage = null;
-let sceneIndex = 0;
-const memes = [
-  {
-    top: "ME: AAJ SE PADHAI START 😂",
-    bottom: "ALSO ME: KAL SE PAKKA 💀"
-  },
-  {
-    top: "WHEN MOM SAYS GUESTS ARE COMING",
-    bottom: "CLEAN THE WHOLE HOUSE 😭"
-  },
-  {
-    top: "SALARY CREDITED 💰",
-    bottom: "BANK BALANCE AFTER 2 DAYS 💀"
-  },
-  {
-    top: "ME IN THE EXAM HALL",
-    bottom: "YE QUESTION KABHI DEKHA HI NAHI 😭"
-  },
-  {
-    top: "FRIEND: BAS 5 MINUTES",
-    bottom: "2 HOURS LATER 💀"
-  },
-  {
-    top: "ME ACTING NORMAL",
-    bottom: "AFTER DOING SOMETHING STUPID 😂"
-  }
-];
-function setStatus(message) {
-  const status = $("status");
-  if (status) status.textContent = message;
-}
-function setupCanvas() {
-  if (!canvas || !ctx) {
-    setStatus("Error: memeCanvas not found in HTML.");
-    console.error("Canvas element missing.");
-    return false;
-  }
-  canvas.width = 800;
-  canvas.height = 600;
-  // Critical fix: remove the HTML hidden attribute
-  canvas.hidden = false;
-  canvas.style.display = "block";
-  canvas.style.visibility = "visible";
-  canvas.style.opacity = "1";
-  canvas.style.width = "100%";
-  canvas.style.maxWidth = "800px";
-  canvas.style.height = "auto";
-  return true;
-}
-function getCaptions() {
-  const topInput = $("topText");
-  const bottomInput = $("bottomText");
-  const idea = $("idea");
-  let top = topInput ? topInput.value.trim() : "";
-  let bottom = bottomInput ? bottomInput.value.trim() : "";
-  const prompt = idea ? idea.value.toLowerCase() : "";
-  let meme = memes[sceneIndex % memes.length];
-  if (prompt.includes("exam") || prompt.includes("study")) {
-    meme = memes[3];
-  } else if (prompt.includes("money") || prompt.includes("salary")) {
-    meme = memes[2];
-  } else if (prompt.includes("friend")) {
-    meme = memes[4];
-  } else if (prompt.includes("mom")) {
-    meme = memes[1];
-  }
-  if (!top) top = meme.top;
-  if (!bottom) bottom = meme.bottom;
-  return { top, bottom };
-}
-/* Draw a funny cartoon face */
-function drawCartoon() {
-  const w = canvas.width;
-  const h = canvas.height;
-  // Colourful background
-  const bg = ctx.createLinearGradient(0, 0, w, h);
-  bg.addColorStop(0, "#ffd86b");
-  bg.addColorStop(1, "#ff8caa");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, w, h);
-  // Background decoration
-  ctx.fillStyle = "rgba(255,255,255,0.25)";
-  for (let i = 0; i < 12; i++) {
-    ctx.beginPath();
-    ctx.arc(
-      (i * 137 + 45) % w,
-      (i * 91 + 35) % h,
-      15 + (i % 4) * 8,
-      0,
-      Math.PI * 2
-    );
-    ctx.fill();
-  }
-  // Body
-  ctx.fillStyle = "#536dfe";
-  ctx.beginPath();
-  ctx.ellipse(400, 490, 155, 130, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Neck
-  ctx.fillStyle = "#f2b98c";
-  ctx.fillRect(365, 385, 70, 65);
-  // Ears
-  ctx.beginPath();
-  ctx.ellipse(285, 290, 28, 43, 0, 0, Math.PI * 2);
-  ctx.ellipse(515, 290, 28, 43, 0, 0, Math.PI * 2);
-  ctx.fillStyle = "#f2b98c";
-  ctx.fill();
-  // Face
-  ctx.beginPath();
-  ctx.ellipse(400, 290, 120, 145, 0, 0, Math.PI * 2);
-  ctx.fillStyle = "#ffd0a3";
-  ctx.fill();
-  // Hair
-  ctx.fillStyle = "#30233f";
-  ctx.beginPath();
-  ctx.arc(400, 235, 112, Math.PI, Math.PI * 2);
-  ctx.lineTo(510, 270);
-  ctx.quadraticCurveTo(480, 230, 450, 250);
-  ctx.quadraticCurveTo(415, 200, 380, 245);
-  ctx.quadraticCurveTo(330, 220, 290, 270);
-  ctx.closePath();
-  ctx.fill();
-  // Eyebrows
-  ctx.strokeStyle = "#30233f";
-  ctx.lineWidth = 11;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(325, 260);
-  ctx.lineTo(365, 270);
-  ctx.moveTo(435, 270);
-  ctx.lineTo(475, 260);
-  ctx.stroke();
-  // Eyes
-  ctx.fillStyle = "#ffffff";
-  ctx.beginPath();
-  ctx.ellipse(355, 295, 29, 36, 0, 0, Math.PI * 2);
-  ctx.ellipse(445, 295, 29, 36, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Pupils
-  ctx.fillStyle = "#29213b";
-  ctx.beginPath();
-  ctx.arc(365, 305, 15, 0, Math.PI * 2);
-  ctx.arc(455, 305, 15, 0, Math.PI * 2);
-  ctx.fill();
-  // Eye shine
-  ctx.fillStyle = "#ffffff";
-  ctx.beginPath();
-  ctx.arc(370, 299, 5, 0, Math.PI * 2);
-  ctx.arc(460, 299, 5, 0, Math.PI * 2);
-  ctx.fill();
-  // Nose
-  ctx.fillStyle = "#e99b7c";
-  ctx.beginPath();
-  ctx.moveTo(400, 315);
-  ctx.lineTo(385, 342);
-  ctx.quadraticCurveTo(400, 351, 415, 342);
-  ctx.closePath();
-  ctx.fill();
-  // Big goofy mouth
-  ctx.fillStyle = "#5b1935";
-  ctx.beginPath();
-  ctx.ellipse(400, 375, 48, 34, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Teeth
-  ctx.fillStyle = "#ffffff";
-  ctx.beginPath();
-  ctx.roundRect(374, 348, 52, 17, 5);
-  ctx.fill();
-  // Tongue
-  ctx.fillStyle = "#ff6584";
-  ctx.beginPath();
-  ctx.ellipse(400, 393, 24, 12, 0, 0, Math.PI);
-  ctx.fill();
-  // Blushing cheeks
-  ctx.fillStyle = "#ff829b";
-  ctx.beginPath();
-  ctx.ellipse(315, 340, 22, 12, 0, 0, Math.PI * 2);
-  ctx.ellipse(485, 340, 22, 12, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // Sweat drops
-  ctx.fillStyle = "#22b9ff";
-  ctx.beginPath();
-  ctx.ellipse(535, 250, 9, 18, -0.4, 0, Math.PI * 2);
-  ctx.ellipse(555, 285, 7, 13, -0.4, 0, Math.PI * 2);
-  ctx.fill();
-  // Arms
-  ctx.strokeStyle = "#ffd0a3";
-  ctx.lineWidth = 25;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(300, 465);
-  ctx.lineTo(245, 420);
-  ctx.moveTo(500, 465);
-  ctx.lineTo(555, 420);
-  ctx.stroke();
-  // Hands
-  ctx.fillStyle = "#ffd0a3";
-  ctx.beginPath();
-  ctx.arc(240, 415, 20, 0, Math.PI * 2);
-  ctx.arc(560, 415, 20, 0, Math.PI * 2);
-  ctx.fill();
-  // Comic symbols
-  ctx.font = "bold 45px Arial";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("?!", 560, 210);
-  ctx.fillText("😂", 175, 320);
-}
-/* Draw outlined, wrapped meme captions */
-function drawCaption(text, y, maxWidth, fontSize) {
-  if (!text) return;
-  const words = text.toUpperCase().split(/\s+/);
-  const lines = [];
-  let line = "";
-  ctx.font = `900 ${fontSize}px Impact, "Arial Black", sans-serif`;
-  for (const word of words) {
-    const test = line ? line + " " + word : word;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = test;
+(() => {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("memeCanvas");
+  const ctx = canvas.getContext("2d");
+  const templates = [
+    {
+      name: "Surprise Test",
+      emoji: "😱",
+      bg: "#384b73",
+      top: "TEACHER: SURPRISE TEST",
+      bottom: "MY SOUL LEFT THE BODY 💀"
+    },
+    {
+      name: "Monday Mood",
+      emoji: "😩",
+      bg: "#5b426b",
+      top: "ME ON SUNDAY NIGHT",
+      bottom: "MONDAY IS COMING AGAIN"
+    },
+    {
+      name: "Big Brain",
+      emoji: "🧠",
+      bg: "#315b61",
+      top: "I STUDIED FOR 5 MINUTES",
+      bottom: "READY TO TEACH THE CLASS"
+    },
+    {
+      name: "Distracted",
+      emoji: "👀",
+      bg: "#6b4a37",
+      top: "ME TRYING TO FOCUS",
+      bottom: "ONE NOTIFICATION LATER"
+    },
+    {
+      name: "No Money",
+      emoji: "💸",
+      bg: "#4b527e",
+      top: "SALARY JUST ARRIVED",
+      bottom: "BILLS: HELLO THERE"
+    },
+    {
+      name: "Sleepy",
+      emoji: "🥱",
+      bg: "#4e426c",
+      top: "ONE MORE VIDEO",
+      bottom: "SUNRISE: GOOD MORNING"
+    },
+    {
+      name: "Exam Panic",
+      emoji: "🤯",
+      bg: "#7b454e",
+      top: "I OPENED THE QUESTION PAPER",
+      bottom: "I HAVE NEVER SEEN THESE WORDS"
+    },
+    {
+      name: "Success",
+      emoji: "😎",
+      bg: "#386052",
+      top: "ANSWERED ONE QUESTION",
+      bottom: "TOPPER ENERGY ACTIVATED"
     }
-  }
-  if (line) lines.push(line);
-  const lineHeight = fontSize * 1.08;
-  const startY = y - ((lines.length - 1) * lineHeight) / 2;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.lineJoin = "round";
-  lines.forEach((item, index) => {
-    const lineY = startY + index * lineHeight;
-    ctx.lineWidth = Math.max(4, fontSize / 7);
-    ctx.strokeStyle = "#000000";
-    ctx.strokeText(item, canvas.width / 2, lineY, maxWidth);
-    ctx.fillStyle = $("textColor")?.value || "#ffffff";
-    ctx.fillText(item, canvas.width / 2, lineY, maxWidth);
-  });
-}
-/* Render photo or generated cartoon */
-function renderMeme() {
-  if (!setupCanvas()) return;
-  if (uploadedImage) {
-    const ratio = uploadedImage.width / uploadedImage.height;
-    const canvasRatio = canvas.width / canvas.height;
-    let drawWidth, drawHeight, x, y;
-    if (ratio > canvasRatio) {
-      drawHeight = canvas.height;
-      drawWidth = drawHeight * ratio;
-      x = (canvas.width - drawWidth) / 2;
-      y = 0;
-    } else {
-      drawWidth = canvas.width;
-      drawHeight = drawWidth / ratio;
-      x = 0;
-      y = (canvas.height - drawHeight) / 2;
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(uploadedImage, x, y, drawWidth, drawHeight);
-  } else {
-    drawCartoon();
-  }
-  const { top, bottom } = getCaptions();
-  const size = Number($("fontSize")?.value) || 38;
-  const fontSize = Math.min(size, 58);
-  // Caption background bars
-  ctx.fillStyle = "rgba(0,0,0,0.52)";
-  ctx.fillRect(0, 0, canvas.width, 105);
-  ctx.fillRect(0, canvas.height - 110, canvas.width, 110);
-  drawCaption(top, 52, canvas.width - 35, fontSize);
-  drawCaption(bottom, canvas.height - 55, canvas.width - 35, fontSize);
-  // Critical blank-canvas fix
-  canvas.hidden = false;
-  canvas.style.display = "block";
-  canvas.style.visibility = "visible";
-  canvas.style.opacity = "1";
-  const emptyState = $("emptyState");
-  if (emptyState) emptyState.style.display = "none";
-}
-/* Generate a meme */
-function generateMeme() {
-  sceneIndex++;
-  const topInput = $("topText");
-  const bottomInput = $("bottomText");
-  const idea = $("idea");
-  if (
-    (!topInput || !topInput.value.trim()) &&
-    (!bottomInput || !bottomInput.value.trim()) &&
-    (!idea || !idea.value.trim())
-  ) {
-    const meme = memes[sceneIndex % memes.length];
-    if (topInput) topInput.value = meme.top;
-    if (bottomInput) bottomInput.value = meme.bottom;
-  }
-  renderMeme();
-  setStatus("😂 Funny meme generated successfully!");
-}
-/* Load uploaded image */
-function handleImageUpload(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    setStatus("Please select a valid image.");
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = new Image();
-    img.onload = function () {
-      uploadedImage = img;
-      renderMeme();
-      if ($("uploadTitle")) {
-        $("uploadTitle").textContent = "Image ready";
-      }
-      if ($("uploadInfo")) {
-        $("uploadInfo").textContent = file.name;
-      }
-      setStatus("Image uploaded! Add captions or generate a meme.");
-    };
-    img.onerror = function () {
-      setStatus("Image could not be loaded. Try another image.");
-    };
-    img.src = e.target.result;
+  ];
+  let selectedTemplate = 0;
+  let selectedMood = "funny";
+  let selectedImage = null;
+  let selectedSource = "";
+  let selectedSourceName = "Built-in template — no external image needed.";
+  const moodCaptions = {
+    funny: [
+      "TEACHER: SURPRISE TEST TODAY",
+      "MY SOUL LEFT THE BODY 💀"
+    ],
+    sarcastic: [
+      "OH GREAT, ANOTHER TEST",
+      "EXACTLY WHAT I WANTED 🙃"
+    ],
+    relatable: [
+      "ME OPENING THE QUESTION PAPER",
+      "I HAVE NEVER SEEN THESE WORDS 🥲"
+    ],
+    savage: [
+      "I DIDN'T STUDY",
+      "BUT I'M ABOUT TO IMPROVISE 🔥"
+    ]
   };
-  reader.readAsDataURL(file);
-}
-/* Download PNG */
-function downloadMeme() {
-  if (!canvas || !ctx) {
-    setStatus("Canvas is missing from index.html.");
-    return;
+  function drawBackground(template) {
+    const gradient = ctx.createLinearGradient(
+      0, 0, canvas.width, canvas.height
+    );
+    gradient.addColorStop(0, template.bg);
+    gradient.addColorStop(1, "#10172d");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "220px sans-serif";
+    ctx.fillText(
+      template.emoji,
+      canvas.width / 2,
+      canvas.height / 2
+    );
+    ctx.restore();
   }
-  renderMeme();
-  try {
-    const link = document.createElement("a");
-    link.download = "MemeAI-funny-meme.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    setStatus("Meme downloaded successfully!");
-  } catch (error) {
-    setStatus("Download failed. Please try again.");
-    console.error(error);
+  function drawImageCover(image) {
+    const scale = Math.max(
+      canvas.width / image.width,
+      canvas.height / image.height
+    );
+    const width = image.width * scale;
+    const height = image.height * scale;
+    ctx.drawImage(
+      image,
+      (canvas.width - width) / 2,
+      (canvas.height - height) / 2,
+      width,
+      height
+    );
+    ctx.fillStyle = "#00000035";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
-}
-/* Reset editor */
-function resetMeme() {
-  uploadedImage = null;
-  ["topText", "bottomText", "idea"].forEach((id) => {
-    if ($(id)) $(id).value = "";
+  function wrapText(text, maxWidth, initialSize) {
+    let fontSize = initialSize;
+    let lines = [];
+    while (fontSize >= 14) {
+      ctx.font =
+        `900 ${fontSize}px Impact, "Arial Black", sans-serif`;
+      lines = [];
+      let currentLine = "";
+      const words = text.split(/\s+/).filter(Boolean);
+      for (const word of words) {
+        const testLine = currentLine
+          ? `${currentLine} ${word}`
+          : word;
+        if (
+          ctx.measureText(testLine).width > maxWidth &&
+          currentLine
+        ) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      if (lines.length <= 2) break;
+      fontSize -= 2;
+    }
+    return { lines, fontSize };
+  }
+  function drawCaption(text, position) {
+    if (!text.trim()) return;
+    const displayText = $("uppercase").checked
+      ? text.toUpperCase()
+      : text;
+    const desiredSize = Number($("fontSize").value);
+    const maxWidth = canvas.width - 55;
+    const result = wrapText(
+      displayText,
+      maxWidth,
+      desiredSize
+    );
+    const fontSize = result.fontSize;
+    const lineHeight = fontSize * 1.12;
+    ctx.save();
+    ctx.font =
+      `900 ${fontSize}px Impact, "Arial Black", sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = $("textColor").value;
+    ctx.lineJoin = "round";
+    ctx.lineWidth = $("outline").checked
+      ? Math.max(3, fontSize * 0.12)
+      : 0;
+    ctx.strokeStyle = "#000000";
+    const totalHeight = result.lines.length * lineHeight;
+    const startY = position === "top"
+      ? 45 + lineHeight / 2
+      : canvas.height - 25 - totalHeight + lineHeight / 2;
+    result.lines.forEach((line, index) => {
+      const y = startY + index * lineHeight;
+      if ($("outline").checked) {
+        ctx.strokeText(
+          line,
+          canvas.width / 2,
+          y,
+          maxWidth
+        );
+      }
+      ctx.fillText(
+        line,
+        canvas.width / 2,
+        y,
+        maxWidth
+      );
+    });
+    ctx.restore();
+  }
+  function renderMeme() {
+    canvas.width = 900;
+    canvas.height = 650;
+    if (selectedImage) {
+      drawImageCover(selectedImage);
+    } else {
+      drawBackground(templates[selectedTemplate]);
+    }
+    drawCaption($("topText").value, "top");
+    drawCaption($("bottomText").value, "bottom");
+    $("fontSizeValue").textContent =
+      `${$("fontSize").value} px`;
+    $("photoCredit").textContent = selectedSourceName;
+    const sourceLink = $("sourceLink");
+    if (selectedSource) {
+      sourceLink.href = selectedSource;
+      sourceLink.classList.remove("hidden");
+    } else {
+      sourceLink.classList.add("hidden");
+      sourceLink.removeAttribute("href");
+    }
+  }
+  function buildTemplates() {
+    const grid = $("templateGrid");
+    grid.innerHTML = "";
+    templates.forEach((template, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className =
+        "template-card" +
+        (index === selectedTemplate ? " active" : "");
+      const thumbnail = document.createElement("div");
+      thumbnail.className = "template-thumb";
+      thumbnail.style.background = template.bg;
+      thumbnail.textContent = template.emoji;
+      const title = document.createElement("span");
+      title.textContent = template.name;
+      button.append(thumbnail, title);
+      button.addEventListener("click", () => {
+        selectedTemplate = index;
+        selectedImage = null;
+        selectedSource = "";
+        selectedSourceName =
+          "Built-in template — no external image needed.";
+        $("topText").value = template.top;
+        $("bottomText").value = template.bottom;
+        document
+          .querySelectorAll(".template-card")
+          .forEach((card, i) => {
+            card.classList.toggle("active", i === index);
+          });
+        renderMeme();
+        $("status").textContent =
+          `${template.name} template selected.`;
+      });
+      grid.appendChild(button);
+    });
+  }
+  function makeCaptions() {
+    const prompt = $("prompt").value.trim().toLowerCase();
+    if (!prompt) {
+      $("status").textContent =
+        "Please describe your meme first.";
+      return;
+    }
+    let captions;
+    if (/exam|test|teacher|college|school|study|class|homework/.test(prompt)) {
+      captions = moodCaptions[selectedMood];
+    } else if (/money|salary|broke|shopping|bill/.test(prompt)) {
+      captions = [
+        "ME CHECKING MY BANK BALANCE",
+        "WE DON'T TALK ABOUT THAT 💸"
+      ];
+    } else if (/sleep|tired|monday|morning/.test(prompt)) {
+      captions = [
+        "ME SAYING I'LL SLEEP EARLY",
+        "3 AM: ONE LAST VIDEO 🥱"
+      ];
+    } else if (/friend|crush|relationship|bestie/.test(prompt)) {
+      captions = [
+        "ME: I'M NOT OVERTHINKING",
+        "MY BRAIN AT 2 AM 👀"
+      ];
+    } else {
+      captions = moodCaptions[selectedMood];
+    }
+    $("topText").value = captions[0];
+    $("bottomText").value = captions[1];
+    renderMeme();
+    $("status").textContent =
+      "Captions generated! You can edit both lines.";
+  }
+  async function searchFreePhotos() {
+    const button = $("searchPhotos");
+    const results = $("photoResults");
+    button.disabled = true;
+    button.textContent = "Searching...";
+    results.innerHTML = "";
+    $("status").textContent =
+      "Searching Wikimedia Commons...";
+    try {
+      const prompt = $("prompt").value.toLowerCase();
+      let searchTerm = "funny reaction face portrait";
+      if (/cat|pet|animal/.test(prompt)) {
+        searchTerm = "funny cat reaction";
+      } else if (/exam|test|teacher|school|college|study/.test(prompt)) {
+        searchTerm = "surprised student face";
+      } else if (/sleep|tired|monday/.test(prompt)) {
+        searchTerm = "tired person face";
+      } else if (/money|salary|broke/.test(prompt)) {
+        searchTerm = "surprised person face";
+      }
+      const apiURL = new URL(
+        "https://commons.wikimedia.org/w/api.php"
+      );
+      apiURL.search = new URLSearchParams({
+        action: "query",
+        format: "json",
+        origin: "*",
+        generator: "search",
+        gsrsearch: `${searchTerm} filetype:bitmap`,
+        gsrnamespace: "6",
+        gsrlimit: "12",
+        prop: "imageinfo",
+        iiprop: "url|extmetadata",
+        iiurlwidth: "420"
+      });
+      const response = await fetch(apiURL);
+      if (!response.ok) {
+        throw new Error("Photo search failed.");
+      }
+      const data = await response.json();
+      const pages = Object.values(
+        data.query?.pages || {}
+      );
+      if (!pages.length) {
+        $("status").textContent =
+          "No photos found. Try a different prompt or use a template.";
+        return;
+      }
+      let count = 0;
+      pages.forEach((page) => {
+        const info = page.imageinfo?.[0];
+        if (!info) return;
+        const imageURL = info.thumburl || info.url;
+        if (!imageURL) return;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "photo-result";
+        const img = document.createElement("img");
+        img.src = imageURL;
+        img.alt = page.title || "Reaction photo";
+        img.loading = "lazy";
+        const label = document.createElement("span");
+        label.textContent = (page.title || "Photo")
+          .replace(/^File:/, "")
+          .slice(0, 45);
+        button.append(img, label);
+        button.addEventListener("click", () => {
+          loadPhoto(info, page, button);
+        });
+        results.appendChild(button);
+        count++;
+      });
+      $("status").textContent = count
+        ? "Select a photo. Check its licence before reuse."
+        : "No usable photos found. Try again later.";
+    } catch (error) {
+      $("status").textContent =
+        "Photo search unavailable. Check your internet or choose a template.";
+    } finally {
+      button.disabled = false;
+      button.textContent = "🔎 Search Free Photos";
+    }
+  }
+  function loadPhoto(info, page, button) {
+    const url = info.thumburl || info.url;
+    if (!url) return;
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      selectedImage = image;
+      selectedSource =
+        info.descriptionurl ||
+        "https://commons.wikimedia.org/";
+      const metadata = info.extmetadata || {};
+      const artist = (
+        metadata.Artist?.value || "Author not listed"
+      ).replace(/<[^>]*>/g, "").slice(0, 70);
+      const license = (
+        metadata.LicenseShortName?.value || "Check source licence"
+      ).replace(/<[^>]*>/g, "");
+      selectedSourceName =
+        `Photo: ${artist} · Licence: ${license}`;
+      document
+        .querySelectorAll(".photo-result")
+        .forEach((item) => {
+          item.classList.toggle("active", item === button);
+        });
+      renderMeme();
+      $("status").textContent =
+        "Photo loaded! Edit captions and download.";
+    };
+    image.onerror = () => {
+      $("status").textContent =
+        "Could not load this image for export. Try another photo.";
+    };
+    image.src = url;
+  }
+  function downloadMeme() {
+    try {
+      const link = document.createElement("a");
+      link.download = "my-meme.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      $("status").textContent =
+        "Your meme has been downloaded!";
+    } catch (error) {
+      $("status").textContent =
+        "This photo blocks export. Select a built-in template or another photo.";
+    }
+  }
+  document.querySelectorAll(".mood").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedMood = button.dataset.mood;
+      document.querySelectorAll(".mood").forEach((item) => {
+        item.classList.toggle("active", item === button);
+      });
+      makeCaptions();
+    });
   });
-  if ($("imageInput")) $("imageInput").value = "";
-  if ($("uploadTitle")) {
-    $("uploadTitle").textContent = "Choose an image";
-  }
-  if ($("uploadInfo")) {
-    $("uploadInfo").textContent = "PNG, JPG or WEBP";
-  }
+  [
+    "topText",
+    "bottomText",
+    "textColor",
+    "fontSize",
+    "uppercase",
+    "outline"
+  ].forEach((id) => {
+    $(id).addEventListener("input", renderMeme);
+  });
+  $("generateBtn").addEventListener("click", makeCaptions);
+  $("searchPhotos").addEventListener("click", searchFreePhotos);
+  $("downloadBtn").addEventListener("click", downloadMeme);
+  $("copyBtn").addEventListener("click", async () => {
+    const text =
+      `${$("topText").value}\n${$("bottomText").value}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      $("status").textContent = "Captions copied!";
+    } catch {
+      $("status").textContent = text;
+    }
+  });
+  $("resetBtn").addEventListener("click", () => {
+    selectedTemplate = 0;
+    selectedMood = "funny";
+    selectedImage = null;
+    selectedSource = "";
+    selectedSourceName =
+      "Built-in template — no external image needed.";
+    $("prompt").value =
+      "When the teacher announces a surprise test";
+    $("textColor").value = "#ffffff";
+    $("fontSize").value = "34";
+    $("uppercase").checked = true;
+    $("outline").checked = true;
+    $("topText").value = templates[0].top;
+    $("bottomText").value = templates[0].bottom;
+    document.querySelectorAll(".mood").forEach((item) => {
+      item.classList.toggle(
+        "active",
+        item.dataset.mood === "funny"
+      );
+    });
+    document.querySelectorAll(".template-card").forEach((item, i) => {
+      item.classList.toggle("active", i === 0);
+    });
+    $("photoResults").innerHTML = "";
+    renderMeme();
+    $("status").textContent = "Reset complete!";
+  });
+  buildTemplates();
   renderMeme();
-  setStatus("Ready! Generate a funny meme 😂");
-}
-/* Connect controls */
-$("generateButton")?.addEventListener("click", generateMeme);
-$("redrawButton")?.addEventListener("click", renderMeme);
-$("downloadButton")?.addEventListener("click", downloadMeme);
-$("imageInput")?.addEventListener("change", handleImageUpload);
-["topText", "bottomText", "fontSize", "textColor"].forEach((id) => {
-  $(id)?.addEventListener("input", renderMeme);
-});
-// Initial render on page load
-if (canvas && ctx) {
-  renderMeme();
-  setStatus("Ready! Click Generate with AI to create a funny meme 😂");
-} else {
-  console.error('Please check for <canvas id="memeCanvas"> in index.html.');
-  setStatus("Canvas missing. Please check index.html.");
-}
+})();
