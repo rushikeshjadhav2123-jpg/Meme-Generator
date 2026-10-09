@@ -15,7 +15,6 @@ const durationInput = document.getElementById("duration");
 const outlineInput = document.getElementById("outline");
 const uppercaseInput = document.getElementById("uppercase");
 const statusBox = document.getElementById("status");
-
 const templates = [...document.querySelectorAll(".template")];
 
 let uploadedImage = null;
@@ -50,11 +49,7 @@ function drawBackground() {
   ctx.fillRect(0, 0, w, h);
 
   if (uploadedImage) {
-    const scale = Math.max(
-      w / uploadedImage.width,
-      h / uploadedImage.height
-    );
-
+    const scale = Math.max(w / uploadedImage.width, h / uploadedImage.height);
     const dw = uploadedImage.width * scale;
     const dh = uploadedImage.height * scale;
 
@@ -62,16 +57,8 @@ function drawBackground() {
     ctx.beginPath();
     ctx.rect(0, 0, w, h);
     ctx.clip();
-
-    ctx.drawImage(
-      uploadedImage,
-      (w - dw) / 2,
-      (h - dh) / 2,
-      dw,
-      dh
-    );
-
-    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.drawImage(uploadedImage, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    ctx.fillStyle = "rgba(0,0,0,0.20)";
     ctx.fillRect(0, 0, w, h);
     ctx.restore();
   } else {
@@ -86,7 +73,6 @@ function drawBackground() {
     ctx.beginPath();
     ctx.arc(90, 90, 60, 0, Math.PI * 2);
     ctx.fill();
-
     ctx.beginPath();
     ctx.arc(w - 90, h - 90, 100, 0, Math.PI * 2);
     ctx.fill();
@@ -99,31 +85,13 @@ function wrapText(text, maxWidth) {
   let line = "";
 
   for (const word of words) {
-    let candidate = line ? line + " " + word : word;
+    const candidate = line ? line + " " + word : word;
 
     if (ctx.measureText(candidate).width > maxWidth && line) {
       lines.push(line);
       line = word;
     } else {
       line = candidate;
-    }
-
-    // Break very long words so they don't disappear off-canvas.
-    while (
-      ctx.measureText(line).width > maxWidth &&
-      line.length > 1
-    ) {
-      let cut = line.length - 1;
-
-      while (
-        cut > 1 &&
-        ctx.measureText(line.slice(0, cut)).width > maxWidth
-      ) {
-        cut--;
-      }
-
-      lines.push(line.slice(0, cut));
-      line = line.slice(cut);
     }
   }
 
@@ -134,10 +102,7 @@ function wrapText(text, maxWidth) {
 function drawCaption(text, y, fontSize, scale = 1) {
   if (!text.trim()) return;
 
-  const output = uppercaseInput.checked
-    ? text.toUpperCase()
-    : text;
-
+  const output = uppercaseInput.checked ? text.toUpperCase() : text;
   const size = fontSize * scale;
 
   ctx.save();
@@ -149,8 +114,6 @@ function drawCaption(text, y, fontSize, scale = 1) {
 
   const lines = wrapText(output, canvas.width * 0.88);
   const lineHeight = size * 1.12;
-
-  // Keep multi-line captions inside the canvas.
   let startY = y - ((lines.length - 1) * lineHeight) / 2;
 
   if (y < canvas.height / 2) {
@@ -168,20 +131,10 @@ function drawCaption(text, y, fontSize, scale = 1) {
     if (outlineInput.checked) {
       ctx.strokeStyle = "#000";
       ctx.lineWidth = Math.max(3, size * 0.12);
-      ctx.strokeText(
-        line,
-        canvas.width / 2,
-        lineY,
-        canvas.width * 0.9
-      );
+      ctx.strokeText(line, canvas.width / 2, lineY, canvas.width * 0.9);
     }
 
-    ctx.fillText(
-      line,
-      canvas.width / 2,
-      lineY,
-      canvas.width * 0.9
-    );
+    ctx.fillText(line, canvas.width / 2, lineY, canvas.width * 0.9);
   });
 
   ctx.restore();
@@ -202,7 +155,6 @@ function renderMeme(time = 0) {
   }
 
   const size = Number(fontSizeInput.value);
-
   drawCaption(topInput.value, topY, size, scale);
   drawCaption(bottomInput.value, bottomY, size, scale);
 }
@@ -228,7 +180,7 @@ function startAnimation() {
   tick(performance.now());
 }
 
-// Select a built-in template.
+// Templates
 templates.forEach((button) => {
   button.addEventListener("click", () => {
     templates.forEach((item) => item.classList.remove("active"));
@@ -236,7 +188,6 @@ templates.forEach((button) => {
 
     selectedEmoji = button.dataset.emoji || "😂";
     selectedBackground = button.dataset.bg || "#5141a8";
-
     topInput.value = button.dataset.top || "";
     bottomInput.value = button.dataset.bottom || "";
 
@@ -244,11 +195,11 @@ templates.forEach((button) => {
     imageInput.value = "";
 
     startAnimation();
-    setStatus("Template selected! Customize your captions.");
+    setStatus("Template selected!");
   });
 });
 
-// Upload an image.
+// Upload photo
 imageInput.addEventListener("change", () => {
   const file = imageInput.files && imageInput.files[0];
   if (!file) return;
@@ -260,12 +211,12 @@ imageInput.addEventListener("change", () => {
   }
 
   if (file.size > 20 * 1024 * 1024) {
-    setStatus("Please choose an image smaller than 20 MB.");
+    setStatus("Choose an image smaller than 20 MB.");
     imageInput.value = "";
     return;
   }
 
-  setStatus("Loading your photo...");
+  setStatus("Loading photo...");
 
   const reader = new FileReader();
 
@@ -276,9 +227,7 @@ imageInput.addEventListener("change", () => {
 
     image.onload = () => {
       uploadedImage = image;
-
       templates.forEach((item) => item.classList.remove("active"));
-
       startAnimation();
       setStatus("Photo uploaded successfully!");
     };
@@ -290,14 +239,10 @@ imageInput.addEventListener("change", () => {
   reader.readAsDataURL(file);
 });
 
-// Live editing.
+// Live editing
 [
-  topInput,
-  bottomInput,
-  textColorInput,
-  animationInput,
-  outlineInput,
-  uppercaseInput
+  topInput, bottomInput, textColorInput,
+  animationInput, outlineInput, uppercaseInput
 ].forEach((element) => {
   element.addEventListener("input", startAnimation);
   element.addEventListener("change", startAnimation);
@@ -308,7 +253,11 @@ fontSizeInput.addEventListener("input", () => {
   startAnimation();
 });
 
-// Reset editor.
+durationInput.addEventListener("change", () => {
+  setStatus("Duration set to " + durationInput.value + " seconds.");
+});
+
+// Reset
 document.getElementById("resetBtn").addEventListener("click", () => {
   topInput.value = "WHEN LIFE GIVES YOU BUGS";
   bottomInput.value = "CALL IT A FEATURE";
@@ -326,12 +275,11 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   imageInput.value = "";
 
   templates.forEach((item) => item.classList.remove("active"));
-
   startAnimation();
-  setStatus("Editor reset successfully.");
+  setStatus("Editor reset.");
 });
 
-// Remove uploaded photo.
+// Remove photo
 document.getElementById("clearPhotoBtn").addEventListener("click", () => {
   uploadedImage = null;
   imageInput.value = "";
@@ -339,7 +287,7 @@ document.getElementById("clearPhotoBtn").addEventListener("click", () => {
   setStatus("Photo removed.");
 });
 
-// Download a Blob.
+// Download helper
 function downloadBlob(blob, filename) {
   if (!blob || !blob.size) {
     setStatus("The file is empty. Please try again.");
@@ -348,7 +296,6 @@ function downloadBlob(blob, filename) {
 
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-
   link.href = url;
   link.download = filename;
   link.style.display = "none";
@@ -357,22 +304,22 @@ function downloadBlob(blob, filename) {
   link.click();
   link.remove();
 
-  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
-// Export PNG.
+// PNG export
 document.getElementById("pngBtn").addEventListener("click", () => {
   try {
     redraw();
 
     canvas.toBlob((blob) => {
       if (!blob) {
-        setStatus("PNG export failed. Please try again.");
+        setStatus("PNG export failed.");
         return;
       }
 
       downloadBlob(blob, "my-meme.png");
-      setStatus("PNG created successfully!");
+      setStatus("PNG created. Check your browser downloads.");
     }, "image/png");
   } catch (error) {
     console.error(error);
@@ -380,10 +327,10 @@ document.getElementById("pngBtn").addEventListener("click", () => {
   }
 });
 
-// Export animated GIF using gif.js.
+// GIF export
 document.getElementById("gifBtn").addEventListener("click", () => {
   if (typeof GIF === "undefined") {
-    setStatus("GIF library missing. Add the GIF script to index.html first.");
+    setStatus("GIF library missing. Refresh the page and try again.");
     return;
   }
 
@@ -391,78 +338,91 @@ document.getElementById("gifBtn").addEventListener("click", () => {
 
   isExporting = true;
   stopAnimation();
-  setStatus("Creating GIF... please wait.");
+  setStatus("Preparing GIF...");
 
-  const duration = Number(durationInput.value) || 3;
-  const frameCount = duration * 10;
+  const duration = Math.min(5, Math.max(1, Number(durationInput.value) || 3));
+  const frameCount = duration * 8;
+  let completed = false;
+  let timeoutId;
+
+  function finish(message, blob) {
+    if (completed) return;
+    completed = true;
+    clearTimeout(timeoutId);
+    isExporting = false;
+
+    if (blob && blob.size > 0) {
+      downloadBlob(blob, "my-meme.gif");
+      setStatus("GIF created! Check your browser downloads.");
+    } else {
+      setStatus(message);
+    }
+
+    startAnimation();
+  }
+
+  let gif;
 
   try {
-    const gif = new GIF({
+    gif = new GIF({
       workers: 2,
       quality: 10,
       width: canvas.width,
       height: canvas.height,
-      workerScript:
-        "https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js"
+      workerScript: "./gif.worker.js"
+    });
+
+    gif.on("progress", (progress) => {
+      if (!completed) {
+        setStatus("Creating GIF... " + Math.round(progress * 100) + "%");
+      }
+    });
+
+    gif.on("finished", (blob) => {
+      finish("GIF failed. Check that gif.worker.js exists.", blob);
     });
 
     for (let i = 0; i < frameCount; i++) {
-      renderMeme(i * 100);
-      gif.addFrame(canvas, { copy: true, delay: 100 });
+      renderMeme((i * 1000) / 8);
+      gif.addFrame(canvas, { copy: true, delay: 125 });
     }
 
-    gif.on("finished", (blob) => {
-      isExporting = false;
-      downloadBlob(blob, "my-meme.gif");
-      setStatus("GIF created successfully!");
-      startAnimation();
-    });
-
-    gif.on("abort", () => {
-      isExporting = false;
-      setStatus("GIF export cancelled.");
-      startAnimation();
-    });
-
-    gif.on("error", (error) => {
-      console.error(error);
-      isExporting = false;
-      setStatus("GIF export failed. Try a shorter duration.");
-      startAnimation();
-    });
+    timeoutId = setTimeout(() => {
+      finish("GIF timed out. Check the worker file and refresh.");
+      try {
+        gif.abort();
+      } catch (error) {
+        console.warn(error);
+      }
+    }, 30000);
 
     gif.render();
   } catch (error) {
-    console.error(error);
-    isExporting = false;
-    setStatus("GIF export failed. Try PNG instead.");
-    startAnimation();
+    console.error("GIF error:", error);
+    finish("GIF export failed. Check the worker file.");
   }
 });
 
-// Export video. WebM support varies by browser, especially on iPhone.
+// Video export
 document.getElementById("videoBtn").addEventListener("click", () => {
   if (!canvas.captureStream || !window.MediaRecorder) {
-    setStatus(
-      "Video recording is not supported here. Try a compatible desktop browser."
-    );
+    setStatus("Video recording is not supported in this browser.");
     return;
   }
 
   if (isExporting) return;
 
-  const mimeCandidates = [
+  const types = [
+    "video/mp4",
     "video/webm;codecs=vp9",
     "video/webm;codecs=vp8",
     "video/webm"
   ];
 
-  const mimeType = mimeCandidates.find((type) =>
-    MediaRecorder.isTypeSupported(type)
-  );
+  const mimeType = types.find((type) => MediaRecorder.isTypeSupported(type));
 
   if (!mimeType) {
-    setStatus("This browser does not support a compatible video format.");
+    setStatus("This browser does not support video export.");
     return;
   }
 
@@ -479,12 +439,12 @@ document.getElementById("videoBtn").addEventListener("click", () => {
     isExporting = false;
     stream.getTracks().forEach((track) => track.stop());
     startAnimation();
-    setStatus("Could not start video recording in this browser.");
+    setStatus("Could not start video recording.");
     return;
   }
 
   const chunks = [];
-  const duration = (Number(durationInput.value) || 3) * 1000;
+  const durationMs = (Number(durationInput.value) || 3) * 1000;
   const startedAt = performance.now();
 
   recorder.ondataavailable = (event) => {
@@ -501,16 +461,15 @@ document.getElementById("videoBtn").addEventListener("click", () => {
     isExporting = false;
 
     if (!chunks.length) {
-      setStatus("No video was created. Try another browser.");
+      setStatus("No video created. Try another browser.");
       startAnimation();
       return;
     }
 
     const blob = new Blob(chunks, { type: mimeType });
     const extension = mimeType.includes("mp4") ? "mp4" : "webm";
-
-    downloadBlob(blob, `my-meme.${extension}`);
-    setStatus(`Video created! Format: ${extension.toUpperCase()}`);
+    downloadBlob(blob, "my-meme." + extension);
+    setStatus("Video created in " + extension.toUpperCase() + " format.");
     startAnimation();
   };
 
@@ -520,7 +479,7 @@ document.getElementById("videoBtn").addEventListener("click", () => {
   function recordFrame(now) {
     renderMeme(now - startedAt);
 
-    if (now - startedAt < duration && isExporting) {
+    if (now - startedAt < durationMs && isExporting) {
       requestAnimationFrame(recordFrame);
     } else if (recorder.state !== "inactive") {
       recorder.stop();
@@ -530,6 +489,6 @@ document.getElementById("videoBtn").addEventListener("click", () => {
   requestAnimationFrame(recordFrame);
 });
 
-// Initial preview.
+// Initial preview
 sizeValue.textContent = fontSizeInput.value;
 startAnimation();
