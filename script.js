@@ -1,303 +1,256 @@
-
-/* ==========================================
-   MEME GENERATOR - FREE CARTOON MODE
-   No API key | No backend | Canvas drawing
-   ========================================== */
-
-const $ = (id) => document.getElementById(id);
-
-const canvas = $("memeCanvas");
-if (!canvas) throw new Error('Missing #memeCanvas in index.html');
-
-const ctx = canvas.getContext("2d");
-
-let uploadedPhoto = null;
-let sceneNumber = 0;
-
-const captionSets = {
-  Funny: [
-    ["ME: TODAY I WILL STUDY", "MY BED: COME HERE BRO 😂"],
-    ["JUST FIVE MORE MINUTES", "WAKES UP TOMORROW"],
-    ["MY BRAIN HAS TWO MODES", "SLEEP OR EAT"],
-    ["EXPECTATION: MILLIONAIRE", "REALITY: CHECKING BALANCE"],
-    ["I HAVE A MASTER PLAN", "STEP 1: PANIC"],
-    ["ME ACTING NORMAL", "BRAIN RUNNING 47 SCENARIOS"],
-    ["WHEN WIFI STOPS WORKING", "LIFE HAS NO MEANING"],
-    ["I AM VERY PRODUCTIVE", "AT AVOIDING MY WORK"]
-  ],
-  Savage: [
-    ["I KNOW MY WORTH", "NO DISCOUNT TODAY 😎"],
-    ["I AM NOT IGNORING YOU", "I AM PROTECTING MY PEACE"],
-    ["YOUR OPINION MATTERS", "JUST NOT TO ME"],
-    ["MY LIFE MY RULES", "MY MOM: ABSOLUTELY NOT"],
-    ["SILENCE IS GOLDEN", "SO I AM VERY RICH"]
-  ],
-  Relatable: [
-    ["SALARY ARRIVED", "BILLS SAID HELLO 💸"],
-    ["MONDAY MORNING", "I NEED ANOTHER SUNDAY"],
-    ["PHONE AT 1% BATTERY", "ME AT 100% PANIC"],
-    ["OPENING THE FRIDGE AGAIN", "EXPECTING NEW FOOD"],
-    ["EXAM TOMORROW", "SYLLABUS STILL UNTOUCHED"]
-  ],
-  Sarcastic: [
-    ["OH, GREAT IDEA!", "WHAT COULD POSSIBLY GO WRONG?"],
-    ["I LOVE GROUP PROJECTS", "DOING ALL THE WORK"],
-    ["EVERYTHING IS UNDER CONTROL", "NOTHING IS UNDER CONTROL"],
-    ["SURE, I AM LISTENING", "MY BRAIN IS ON VACATION"]
-  ],
-  "Dark humor": [
-    ["MY FUTURE IS BRIGHT", "POWER CUT AGAIN"],
-    ["LIFE GIVES YOU LESSONS", "WITHOUT THE STUDY MATERIAL"],
-    ["MY PLANS ARE SOLID", "MY MOTIVATION IS NOT"]
-  ],
-  Wholesome: [
-    ["YOU ARE DOING GREAT", "KEEP GOING, LEGEND ❤️"],
-    ["SMALL STEPS EVERY DAY", "BIG THINGS WILL COME"],
-    ["BAD DAY?", "TOMORROW IS ANOTHER CHANCE"]
-  ]
-};
-
-const topicSets = {
-  exam: [
-    ["EXAM TOMORROW", "SYLLABUS STILL LOADING 📚"],
-    ["ME: I KNOW EVERYTHING", "QUESTION PAPER: PROVE IT"],
-    ["OPENED THE BOOK", "SUDDENLY FEELING SLEEPY"]
-  ],
-  college: [
-    ["ATTENDING COLLEGE", "JUST FOR ATTENDANCE"],
-    ["COLLEGE LIFE IS FUN", "UNTIL ASSIGNMENTS ARRIVE"]
-  ],
-  sleep: [
-    ["JUST FIVE MORE MINUTES", "THREE HOURS LATER..."],
-    ["BODY: TIME TO SLEEP", "BRAIN: REMEMBER 2018?"]
-  ],
-  food: [
-    ["DIET STARTS TOMORROW", "TODAY IS A SPECIAL CASE"],
-    ["SHARING IS CARING", "EXCEPT MY FAVOURITE FOOD"]
-  ],
-  money: [
-    ["SALARY IN", "SALARY OUT 💸"],
-    ["CHECKING MY BANK BALANCE", "CLOSE APP IMMEDIATELY"]
-  ],
-  love: [
-    ["WAITING FOR A TEXT", "PHONE: SILENCE"],
-    ["LOVE IS IN THE AIR", "SO IS MY OVERTHINKING"]
-  ]
-};
-
-const scenes = [
-  { bg: "#ffb86c", shirt: "#4937a8", mood: "sleepy" },
-  { bg: "#8be9fd", shirt: "#ff477e", mood: "shocked" },
-  { bg: "#c7f9cc", shirt: "#176b52", mood: "happy" },
-  { bg: "#ffc6ff", shirt: "#6c4ab6", mood: "crying" },
-  { bg: "#ffe66d", shirt: "#e76f51", mood: "silly" },
-  { bg: "#bde0fe", shirt: "#315cbb", mood: "angry" }
-];
-
-function setStatus(message) {
-  const el = $("status");
-  if (el) el.textContent = message;
-}
-
-function randomItem(list) {
-  return list[Math.floor(Math.random() * list.length)];
-}
-
-function chooseCaptions() {
-  const mood = $("mood")?.value || "Funny";
-  const idea = ($("idea")?.value || "").toLowerCase();
-
-  const topics = [
-    ["exam", /\b(exam|test|paper|marks|study|studying|syllabus)\b/],
-    ["college", /\b(college|class|teacher|lecture|attendance)\b/],
-    ["sleep", /\b(sleep|sleepy|tired|bed|nap)\b/],
-    ["food", /\b(food|eat|hungry|pizza|burger|snack)\b/],
-    ["money", /\b(money|salary|bill|bank|broke|shopping)\b/],
-    ["love", /\b(love|crush|date|dating|romance|single)\b/]
-  ];
-
-  for (const [topic, regex] of topics) {
-    if (regex.test(idea)) return randomItem(topicSets[topic]);
+/* =========================================
+   MEME STUDIO PRO — FIXED IMAGE GENERATOR
+   No API key required
+   Funny cartoon + top & bottom captions
+   ========================================= */
+"use strict";
+const canvas = document.getElementById("memeCanvas");
+const ctx = canvas ? canvas.getContext("2d") : null;
+let uploadedImage = null;
+let currentScene = 0;
+const funnyMemes = [
+  {
+    top: "ME: AAJ SE PADHAI START 😂",
+    bottom: "ALSO ME: KAL SE PAKKA 💀"
+  },
+  {
+    top: "WHEN MOM SAYS GUESTS ARE COMING",
+    bottom: "CLEAN THE WHOLE HOUSE 😭"
+  },
+  {
+    top: "SALARY CREDITED 💰",
+    bottom: "BANK BALANCE AFTER 2 DAYS 💀"
+  },
+  {
+    top: "ME CHECKING MY EXAM PAPER",
+    bottom: "YE QUESTION SYLLABUS ME THA?! 😭"
+  },
+  {
+    top: "FRIEND: BHAI 5 MINUTES",
+    bottom: "ARRIVES AFTER 2 HOURS 💀"
+  },
+  {
+    top: "ME ACTING NORMAL",
+    bottom: "AFTER DOING SOMETHING STUPID 😂"
   }
-
-  return randomItem(captionSets[mood] || captionSets.Funny);
+];
+function getElement(id) {
+  return document.getElementById(id);
 }
-
-/* Draw a cartoon-style character from scratch */
-function drawCartoon(scene) {
+function setStatus(message) {
+  const status = getElement("status") || getElement("statusText");
+  if (status) status.textContent = message;
+}
+function getCaptions() {
+  const topInput = getElement("topText");
+  const bottomInput = getElement("bottomText");
+  let top = topInput && topInput.value.trim();
+  let bottom = bottomInput && bottomInput.value.trim();
+  if (!top || !bottom) {
+    const idea = getElement("idea");
+    const prompt = idea ? idea.value.trim().toLowerCase() : "";
+    let meme;
+    if (prompt.includes("exam") || prompt.includes("study")) {
+      meme = funnyMemes[3];
+    } else if (prompt.includes("money") || prompt.includes("salary")) {
+      meme = funnyMemes[2];
+    } else if (prompt.includes("friend")) {
+      meme = funnyMemes[4];
+    } else if (prompt.includes("mom")) {
+      meme = funnyMemes[1];
+    } else {
+      meme = funnyMemes[currentScene % funnyMemes.length];
+    }
+    if (!top) top = meme.top;
+    if (!bottom) bottom = meme.bottom;
+  }
+  return { top, bottom };
+}
+/* Set up the canvas */
+function setupCanvas() {
+  if (!canvas || !ctx) {
+    console.error('Canvas with id="memeCanvas" was not found.');
+    setStatus('Error: memeCanvas not found in index.html');
+    return false;
+  }
+  canvas.width = 800;
+  canvas.height = 600;
+  canvas.style.display = "block";
+  canvas.style.width = "100%";
+  canvas.style.maxWidth = "800px";
+  canvas.style.height = "auto";
+  canvas.style.background = "#fff";
+  return true;
+}
+/* Draw a funny cartoon character */
+function drawCartoon() {
   const w = canvas.width;
   const h = canvas.height;
-  const cx = w / 2;
-
   // Background
-  ctx.fillStyle = scene.bg;
+  const gradient = ctx.createLinearGradient(0, 0, w, h);
+  gradient.addColorStop(0, "#ffe082");
+  gradient.addColorStop(1, "#ff9a9e");
+  ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, w, h);
-
-  // Decorative dots
-  for (let i = 0; i < 18; i++) {
-    const x = (i * 137 + 43) % w;
-    const y = (i * 83 + 40) % h;
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
+  // Decorative circles
+  ctx.globalAlpha = 0.22;
+  ctx.fillStyle = "#ffffff";
+  for (let i = 0; i < 12; i++) {
     ctx.beginPath();
-    ctx.arc(x, y, 5 + (i % 4) * 3, 0, Math.PI * 2);
+    ctx.arc(
+      (i * 137 + 55) % w,
+      (i * 83 + 35) % h,
+      18 + (i % 4) * 8,
+      0,
+      Math.PI * 2
+    );
     ctx.fill();
   }
-
+  ctx.globalAlpha = 1;
+  // Cartoon body
+  ctx.fillStyle = "#3478f6";
+  ctx.beginPath();
+  ctx.ellipse(400, 485, 145, 130, 0, 0, Math.PI * 2);
+  ctx.fill();
   // Neck
-  ctx.fillStyle = "#d99b72";
-  ctx.fillRect(cx - 30, h * 0.61, 60, 60);
-
-  // Body / shirt
-  ctx.fillStyle = scene.shirt;
-  ctx.beginPath();
-  ctx.ellipse(cx, h * 0.91, w * 0.34, h * 0.25, 0, 0, Math.PI * 2);
-  ctx.fill();
-
+  ctx.fillStyle = "#f3bd8c";
+  ctx.fillRect(365, 375, 70, 75);
   // Ears
-  ctx.fillStyle = "#e8ae83";
+  ctx.fillStyle = "#f3bd8c";
   ctx.beginPath();
-  ctx.ellipse(cx - 91, h * 0.40, 18, 29, 0, 0, Math.PI * 2);
-  ctx.ellipse(cx + 91, h * 0.40, 18, 29, 0, 0, Math.PI * 2);
+  ctx.ellipse(285, 275, 32, 48, 0, 0, Math.PI * 2);
   ctx.fill();
-
+  ctx.beginPath();
+  ctx.ellipse(515, 275, 32, 48, 0, 0, Math.PI * 2);
+  ctx.fill();
   // Face
-  ctx.fillStyle = "#f3c39c";
-  ctx.strokeStyle = "#5c3427";
-  ctx.lineWidth = 4;
+  ctx.fillStyle = "#ffd2a6";
   ctx.beginPath();
-  ctx.ellipse(cx, h * 0.40, 91, 111, 0, 0, Math.PI * 2);
+  ctx.ellipse(400, 285, 125, 145, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.stroke();
-
   // Hair
-  ctx.fillStyle = "#39251e";
+  ctx.fillStyle = "#29233a";
   ctx.beginPath();
-  ctx.arc(cx, h * 0.32, 91, Math.PI, Math.PI * 2);
-  ctx.lineTo(cx + 83, h * 0.34);
-  ctx.quadraticCurveTo(cx + 35, h * 0.28, cx, h * 0.34);
-  ctx.quadraticCurveTo(cx - 48, h * 0.25, cx - 83, h * 0.35);
+  ctx.arc(400, 205, 115, Math.PI, Math.PI * 2);
+  ctx.lineTo(515, 255);
+  ctx.quadraticCurveTo(470, 225, 455, 240);
+  ctx.quadraticCurveTo(420, 195, 385, 238);
+  ctx.quadraticCurveTo(335, 205, 290, 260);
   ctx.closePath();
   ctx.fill();
-
-  // Eyebrows and eyes vary by expression
-  ctx.strokeStyle = "#39251e";
-  ctx.lineWidth = 6;
+  // Eyebrows
+  ctx.strokeStyle = "#29233a";
+  ctx.lineWidth = 12;
   ctx.lineCap = "round";
-
-  if (scene.mood === "angry") {
-    ctx.beginPath();
-    ctx.moveTo(cx - 61, h * 0.37);
-    ctx.lineTo(cx - 27, h * 0.39);
-    ctx.moveTo(cx + 27, h * 0.39);
-    ctx.lineTo(cx + 61, h * 0.37);
-    ctx.stroke();
-  } else if (scene.mood === "shocked") {
-    ctx.beginPath();
-    ctx.moveTo(cx - 60, h * 0.34);
-    ctx.quadraticCurveTo(cx - 42, h * 0.29, cx - 25, h * 0.35);
-    ctx.moveTo(cx + 25, h * 0.35);
-    ctx.quadraticCurveTo(cx + 42, h * 0.29, cx + 60, h * 0.34);
-    ctx.stroke();
-  }
-
-  ctx.fillStyle = "#fff";
-  if (scene.mood === "sleepy") {
-    ctx.fillRect(cx - 61, h * 0.40, 39, 8);
-    ctx.fillRect(cx + 22, h * 0.40, 39, 8);
-  } else {
-    ctx.beginPath();
-    ctx.ellipse(cx - 42, h * 0.40, 19, scene.mood === "shocked" ? 23 : 15, 0, 0, Math.PI * 2);
-    ctx.ellipse(cx + 42, h * 0.40, 19, scene.mood === "shocked" ? 23 : 15, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = "#241a16";
-    ctx.beginPath();
-    ctx.arc(cx - 40, h * 0.40, 8, 0, Math.PI * 2);
-    ctx.arc(cx + 40, h * 0.40, 8, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Nose
-  ctx.strokeStyle = "#bd805d";
-  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(cx, h * 0.42);
-  ctx.lineTo(cx - 8, h * 0.49);
-  ctx.lineTo(cx + 6, h * 0.49);
+  ctx.moveTo(325, 258);
+  ctx.lineTo(365, 269);
   ctx.stroke();
-
-  // Mouth expressions
-  ctx.strokeStyle = "#632e2b";
-  ctx.fillStyle = "#8c3131";
-  ctx.lineWidth = 5;
   ctx.beginPath();
-
-  if (scene.mood === "sleepy") {
-    ctx.ellipse(cx, h * 0.55, 13, 19, 0, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (scene.mood === "shocked") {
-    ctx.ellipse(cx, h * 0.56, 19, 25, 0, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (scene.mood === "angry") {
-    ctx.moveTo(cx - 27, h * 0.57);
-    ctx.lineTo(cx + 27, h * 0.57);
-    ctx.stroke();
-  } else {
-    ctx.moveTo(cx - 34, h * 0.53);
-    ctx.quadraticCurveTo(cx, h * 0.63, cx + 34, h * 0.53);
-    ctx.stroke();
-  }
-
-  // Expression details
-  ctx.font = "bold 34px sans-serif";
-  if (scene.mood === "crying") {
-    ctx.fillStyle = "#3298dc";
-    ctx.fillText("💧", cx - 73, h * 0.48);
-    ctx.fillText("💧", cx + 72, h * 0.48);
-  } else if (scene.mood === "shocked") {
-    ctx.fillText("!", cx + 100, h * 0.27);
-  } else if (scene.mood === "sleepy") {
-    ctx.fillText("Z", cx + 95, h * 0.28);
-    ctx.fillText("z", cx + 115, h * 0.23);
-  } else if (scene.mood === "happy") {
-    ctx.fillText("✨", cx + 93, h * 0.30);
-  } else if (scene.mood === "angry") {
-    ctx.fillText("💢", cx + 92, h * 0.31);
-  }
-
-  // Small signature decoration
-  ctx.fillStyle = "rgba(0,0,0,0.15)";
-  ctx.font = "bold 15px sans-serif";
-  ctx.textAlign = "right";
-  ctx.fillText("MEME STUDIO", w - 12, h - 12);
-  ctx.textAlign = "center";
+  ctx.moveTo(435, 269);
+  ctx.lineTo(475, 258);
+  ctx.stroke();
+  // Big cartoon eyes
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.ellipse(355, 294, 30, 38, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(445, 294, 30, 38, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Pupils
+  ctx.fillStyle = "#29233a";
+  ctx.beginPath();
+  ctx.arc(365, 303, 15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(455, 303, 15, 0, Math.PI * 2);
+  ctx.fill();
+  // Eye shine
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(370, 297, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(460, 297, 5, 0, Math.PI * 2);
+  ctx.fill();
+  // Nose
+  ctx.fillStyle = "#e99b7c";
+  ctx.beginPath();
+  ctx.moveTo(400, 305);
+  ctx.lineTo(385, 340);
+  ctx.quadraticCurveTo(400, 350, 415, 340);
+  ctx.closePath();
+  ctx.fill();
+  // Huge goofy open mouth
+  ctx.fillStyle = "#5a1835";
+  ctx.beginPath();
+  ctx.ellipse(400, 373, 48, 32, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Teeth
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.roundRect(373, 346, 54, 17, 5);
+  ctx.fill();
+  // Tongue
+  ctx.fillStyle = "#ff6584";
+  ctx.beginPath();
+  ctx.ellipse(400, 389, 24, 12, 0, 0, Math.PI);
+  ctx.fill();
+  // Cheeks
+  ctx.fillStyle = "#ff8e9e";
+  ctx.beginPath();
+  ctx.ellipse(315, 335, 24, 13, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(485, 335, 24, 13, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Funny sweat drops
+  ctx.fillStyle = "#40c9ff";
+  ctx.beginPath();
+  ctx.ellipse(535, 245, 10, 19, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(555, 280, 7, 13, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  // Little arms
+  ctx.strokeStyle = "#ffd2a6";
+  ctx.lineWidth = 24;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(300, 465);
+  ctx.lineTo(245, 420);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(500, 465);
+  ctx.lineTo(555, 420);
+  ctx.stroke();
+  // Hands
+  ctx.fillStyle = "#ffd2a6";
+  ctx.beginPath();
+  ctx.arc(240, 415, 20, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(560, 415, 20, 0, Math.PI * 2);
+  ctx.fill();
+  // Comic-style laugh marks
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 44px Arial";
+  ctx.fillText("?!", 565, 205);
+  ctx.fillText("😂", 185, 310);
+  // Caption panel behind the character
+  ctx.fillStyle = "rgba(255,255,255,0.16)";
+  ctx.fillRect(0, 440, w, 160);
 }
-
-/* Draw top and bottom captions */
-function drawCaption(text, position) {
-  if (!text || !text.trim()) return;
-
-  const w = canvas.width;
-  const h = canvas.height;
-  const maxWidth = w * 0.92;
-
-  let fontSize = Number($("fontSize")?.value) || 44;
-  fontSize = Math.min(fontSize, w * 0.09);
-
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = `900 ${fontSize}px Impact, "Arial Black", sans-serif`;
-  ctx.lineJoin = "round";
-  ctx.lineWidth = Math.max(3, fontSize * 0.1);
-  ctx.strokeStyle = "#000";
-  ctx.fillStyle = $("textColor")?.value || "#fff";
-
+/* Draw text with outline and wrapping */
+function drawCaption(text, y, maxWidth, fontSize) {
+  if (!text) return;
   const words = text.toUpperCase().split(/\s+/);
   const lines = [];
   let line = "";
-
+  ctx.font = `900 ${fontSize}px Impact, "Arial Black", sans-serif`;
   for (const word of words) {
-    const test = line ? `${line} ${word}` : word;
+    const test = line ? line + " " + word : word;
     if (ctx.measureText(test).width > maxWidth && line) {
       lines.push(line);
       line = word;
@@ -306,126 +259,169 @@ function drawCaption(text, position) {
     }
   }
   if (line) lines.push(line);
-
-  const lineHeight = fontSize * 1.15;
-  const yStart = position === "top"
-    ? 30 + lineHeight / 2
-    : h - 30 - lineHeight * (lines.length - 1) - lineHeight / 2;
-
-  lines.forEach((item, i) => {
-    const y = yStart + i * lineHeight;
-    ctx.strokeText(item, w / 2, y, maxWidth);
-    ctx.fillText(item, w / 2, y, maxWidth);
+  const lineHeight = fontSize * 1.08;
+  const startY = y - ((lines.length - 1) * lineHeight) / 2;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.lineJoin = "round";
+  lines.forEach((lineText, i) => {
+    const lineY = startY + i * lineHeight;
+    ctx.lineWidth = Math.max(4, fontSize / 8);
+    ctx.strokeStyle = "#000000";
+    ctx.strokeText(lineText, canvas.width / 2, lineY, maxWidth);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(lineText, canvas.width / 2, lineY, maxWidth);
   });
 }
-
+/* Render cartoon or uploaded photo */
 function renderMeme() {
-  canvas.width = 700;
-  canvas.height = 700;
-
-  if (uploadedPhoto) {
-    const scale = Math.min(
-      canvas.width / uploadedPhoto.width,
-      canvas.height / uploadedPhoto.height
-    );
-    const dw = uploadedPhoto.width * scale;
-    const dh = uploadedPhoto.height * scale;
-
-    ctx.fillStyle = "#222";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(
-      uploadedPhoto,
-      (canvas.width - dw) / 2,
-      (canvas.height - dh) / 2,
-      dw,
-      dh
-    );
+  if (!setupCanvas()) return;
+  if (uploadedImage) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const imageRatio = uploadedImage.width / uploadedImage.height;
+    const canvasRatio = canvas.width / canvas.height;
+    let drawWidth, drawHeight, x, y;
+    if (imageRatio > canvasRatio) {
+      drawHeight = canvas.height;
+      drawWidth = drawHeight * imageRatio;
+      x = (canvas.width - drawWidth) / 2;
+      y = 0;
+    } else {
+      drawWidth = canvas.width;
+      drawHeight = drawWidth / imageRatio;
+      x = 0;
+      y = (canvas.height - drawHeight) / 2;
+    }
+    ctx.drawImage(uploadedImage, x, y, drawWidth, drawHeight);
   } else {
-    const mood = $("mood")?.value || "Funny";
-    const scene = randomItem(scenes);
-    drawCartoon(scene);
+    drawCartoon();
   }
-
-  drawCaption($("topText")?.value || "", "top");
-  drawCaption($("bottomText")?.value || "", "bottom");
-
-  canvas.hidden = false;
-  if ($("emptyState")) $("emptyState").hidden = true;
+  const captions = getCaptions();
+  const sizeInput = getElement("fontSize");
+  const customSize = sizeInput ? Number(sizeInput.value) : 0;
+  const fontSize = customSize > 0 ? Math.min(customSize, 60) : 36;
+  // Dark transparent bars improve caption visibility
+  ctx.fillStyle = "rgba(0,0,0,0.48)";
+  ctx.fillRect(0, 0, canvas.width, 100);
+  ctx.fillRect(0, canvas.height - 105, canvas.width, 105);
+  drawCaption(captions.top, 50, canvas.width - 35, fontSize);
+  drawCaption(captions.bottom, canvas.height - 52, canvas.width - 35, fontSize);
+  const emptyState = getElement("emptyState");
+  if (emptyState) emptyState.style.display = "none";
+  canvas.style.display = "block";
 }
-
+/* Generate a new meme */
 function generateMeme() {
-  const captions = chooseCaptions();
-
-  if ($("topText")) $("topText").value = captions[0];
-  if ($("bottomText")) $("bottomText").value = captions[1];
-
-  sceneNumber++;
+  currentScene++;
+  uploadedImage = uploadedImage || null;
+  const topInput = getElement("topText");
+  const bottomInput = getElement("bottomText");
+  const idea = getElement("idea");
+  // If both captions are empty, choose a funny default
+  if (
+    (!topInput || !topInput.value.trim()) &&
+    (!bottomInput || !bottomInput.value.trim()) &&
+    (!idea || !idea.value.trim())
+  ) {
+    const meme = funnyMemes[currentScene % funnyMemes.length];
+    if (topInput) topInput.value = meme.top;
+    if (bottomInput) bottomInput.value = meme.bottom;
+  }
   renderMeme();
-  setStatus("New funny meme created! Download it or generate another 😂");
+  setStatus("😂 Funny meme generated successfully!");
 }
-
-/* Optional uploaded photo */
-if ($("imageInput")) {
-  $("imageInput").addEventListener("change", (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setStatus("Please choose an image file.");
+/* Upload a photo */
+function handleImageUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    setStatus("Please select a valid image file.");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = new Image();
+    img.onload = function () {
+      uploadedImage = img;
+      renderMeme();
+      setStatus("Image uploaded! Your meme is ready 😂");
+      const title = getElement("uploadTitle");
+      const info = getElement("uploadInfo");
+      if (title) title.textContent = "Image ready";
+      if (info) info.textContent = file.name;
+    };
+    img.onerror = function () {
+      setStatus("Could not load this image. Try another photo.");
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+/* Download the generated meme */
+function downloadMeme() {
+  if (!canvas || !ctx) {
+    setStatus("Canvas not found. Check index.html.");
+    return;
+  }
+  // Ensure the canvas contains the latest meme
+  renderMeme();
+  const link = document.createElement("a");
+  link.download = "funny-meme.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+  setStatus("Meme downloaded!");
+}
+/* Reset the editor */
+function resetMeme() {
+  uploadedImage = null;
+  const topInput = getElement("topText");
+  const bottomInput = getElement("bottomText");
+  const idea = getElement("idea");
+  const imageInput = getElement("imageInput");
+  if (topInput) topInput.value = "";
+  if (bottomInput) bottomInput.value = "";
+  if (idea) idea.value = "";
+  if (imageInput) imageInput.value = "";
+  renderMeme();
+  setStatus("Ready! Generate a new funny meme 😂");
+}
+/* Connect existing HTML buttons */
+function connectButton(ids, callback) {
+  for (const id of ids) {
+    const element = getElement(id);
+    if (element) {
+      element.addEventListener("click", callback);
       return;
     }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        uploadedPhoto = img;
-        if ($("uploadTitle")) $("uploadTitle").textContent = "Image ready";
-        if ($("uploadInfo")) $("uploadInfo").textContent = file.name;
-        renderMeme();
-        setStatus("Your photo is ready! Generate or edit captions.");
-      };
-      img.onerror = () => setStatus("Could not load the selected image.");
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
+  }
 }
-
-/* Generate button */
-if ($("generateButton")) {
-  $("generateButton").addEventListener("click", generateMeme);
+connectButton(["generateButton"], generateMeme);
+connectButton(["redrawButton", "resetButton"], resetMeme);
+connectButton(["downloadButton"], downloadMeme);
+const imageInput = getElement("imageInput");
+if (imageInput) {
+  imageInput.addEventListener("change", handleImageUpload);
 }
-
-/* Preview button */
-if ($("redrawButton")) {
-  $("redrawButton").addEventListener("click", renderMeme);
-}
-
-/* Update preview when editing captions */
-["topText", "bottomText", "textColor", "fontSize"].forEach((id) => {
-  if ($(id)) {
-    $(id).addEventListener("input", () => {
-      if (canvas && !canvas.hidden) renderMeme();
+// Update the meme when caption fields change
+["topText", "bottomText", "fontSize", "textColor", "mood"].forEach((id) => {
+  const element = getElement(id);
+  if (element) {
+    element.addEventListener("input", () => {
+      if (canvas) renderMeme();
+    });
+    element.addEventListener("change", () => {
+      if (canvas) renderMeme();
     });
   }
 });
-
-/* Download as PNG */
-if ($("downloadButton")) {
-  $("downloadButton").addEventListener("click", () => {
-    if (canvas.hidden) {
-      setStatus("Generate a meme first!");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.download = "funny-meme.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    setStatus("Meme downloaded! 🎉");
-  });
+// Show a cartoon immediately when the page loads
+if (canvas && ctx) {
+  setupCanvas();
+  renderMeme();
+  setStatus("Ready! Click Generate Meme 😂");
+} else {
+  console.error(
+    'Meme Studio: Add <canvas id="memeCanvas"></canvas> to index.html.'
+  );
+  setStatus("Canvas missing: check index.html for id=memeCanvas");
 }
-
-/* Create a starter meme automatically */
-generateMeme();
