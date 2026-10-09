@@ -580,3 +580,57 @@ input[type="checkbox"] {
     padding: 7px;
   }
 }
+/* ===== FINAL MOBILE LAYOUT FIX ===== */
+@media screen and (max-width: 650px) {
+.app-container {
+display: flex !important;
+flex-direction: column !important;
+width: 100% !important;
+min-width: 0 !important;
+}
+
+.tool-tabs {
+display: flex;
+flex-direction: row;
+width: 100%;
+max-width: 100%;
+overflow-x: auto;
+}
+
+.sidebar {
+width: 100% !important;
+max-width: 100% !important;
+min-width: 0 !important;
+}
+
+.canvas-workspace {
+display: flex;
+align-items: center !important;
+justify-content: flex-start;
+width: 100% !important;
+min-width: 0 !important;
+min-height: auto !important;
+padding: 12px 8px !important;
+overflow: hidden !important;
+}
+
+.canvas-card {
+display: block;
+width: 100% !important;
+max-width: 100% !important;
+min-width: 0 !important;
+padding: 4px !important;
+overflow: hidden !important;
+}
+
+.canvas-card .canvas-container,
+.canvas-card .lower-canvas,
+.canvas-card .upper-canvas {
+max-width: 100% !important;
+}
+
+.canvas-card canvas {
+max-width: 100% !important;
+}
+}
+
