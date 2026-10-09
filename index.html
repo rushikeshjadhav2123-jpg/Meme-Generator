@@ -7,7 +7,6 @@
   <meta name="theme-color" content="#101226">
   <meta name="description" content="Create funny memes with Marathi, Hinglish and savage captions.">
   <title>Meme Generator Pro | Funny Meme Studio</title>
-
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -21,13 +20,9 @@
       --border: rgba(255,255,255,.12);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -40,9 +35,7 @@
         var(--bg);
     }
 
-    button, input, select {
-      font: inherit;
-    }
+    button, input, select { font: inherit; }
 
     button {
       padding: 12px 15px;
@@ -119,13 +112,9 @@
       gap: 9px;
     }
 
-    .template {
-      min-width: 0;
-      overflow-wrap: anywhere;
-    }
+    .template { min-width: 0; overflow-wrap: anywhere; }
 
-    .template.active,
-    .primary {
+    .template.active, .primary {
       background: linear-gradient(120deg, var(--accent), var(--accent2));
       border: 0;
       color: white;
@@ -139,9 +128,7 @@
       font-size: 14px;
     }
 
-    input[type="text"],
-    input[type="file"],
-    select {
+    input[type="text"], input[type="file"], select {
       width: 100%;
       min-width: 0;
       padding: 12px;
@@ -151,9 +138,7 @@
       color: white;
     }
 
-    input[type="file"] {
-      font-size: 13px;
-    }
+    input[type="file"] { font-size: 13px; }
 
     input[type="color"] {
       width: 100%;
@@ -200,8 +185,7 @@
       vertical-align: middle;
     }
 
-    #status,
-    #funnyStatus {
+    #status, #funnyStatus {
       min-height: 20px;
       color: var(--muted);
       font-size: 13px;
@@ -209,27 +193,18 @@
       overflow-wrap: anywhere;
     }
 
-    .downloads,
-    .actions {
+    .downloads, .actions {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 9px;
       margin-top: 12px;
     }
 
-    .downloads button:first-child {
-      grid-column: 1 / -1;
-    }
+    .downloads button:first-child { grid-column: 1 / -1; }
 
-    .downloads button,
-    .actions button {
-      min-width: 0;
-    }
+    .downloads button, .actions button { min-width: 0; }
 
-    .full {
-      width: 100%;
-      margin-top: 14px;
-    }
+    .full { width: 100%; margin-top: 14px; }
 
     .studio-intro {
       color: var(--muted);
@@ -257,35 +232,20 @@
         gap: 15px;
       }
 
-      .panel {
-        padding: 17px;
-        border-radius: 16px;
-      }
+      .panel { padding: 17px; border-radius: 16px; }
 
-      .templates {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .templates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-      .header {
-        padding-top: 25px;
-      }
+      .header { padding-top: 25px; }
     }
 
     @media (max-width: 360px) {
-      .downloads,
-      .actions {
-        grid-template-columns: 1fr;
-      }
-
-      .downloads button:first-child {
-        grid-column: auto;
-      }
+      .downloads, .actions { grid-template-columns: 1fr; }
+      .downloads button:first-child { grid-column: auto; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         scroll-behavior: auto !important;
         transition: none !important;
       }
@@ -301,64 +261,39 @@
 
   <main class="container">
 
-    <!-- MEME TEMPLATES -->
     <section class="panel">
       <h2>🎨 Choose a Template</h2>
 
       <div class="templates">
-        <button type="button"
-          class="template active"
-          data-bg="#5141a8"
-          data-emoji="😂"
+        <button type="button" class="template active"
+          data-bg="#5141a8" data-emoji="😂"
           data-top="WHEN LIFE GIVES YOU BUGS"
-          data-bottom="CALL IT A FEATURE">
-          🐛 Bugs
-        </button>
+          data-bottom="CALL IT A FEATURE">🐛 Bugs</button>
 
-        <button type="button"
-          class="template"
-          data-bg="#176b87"
-          data-emoji="😎"
+        <button type="button" class="template"
+          data-bg="#176b87" data-emoji="😎"
           data-top="I HAVE NO IDEA"
-          data-bottom="BUT I LOOK CONFIDENT">
-          😎 Confidence
-        </button>
+          data-bottom="BUT I LOOK CONFIDENT">😎 Confidence</button>
 
-        <button type="button"
-          class="template"
-          data-bg="#713c8e"
-          data-emoji="💻"
+        <button type="button" class="template"
+          data-bg="#713c8e" data-emoji="💻"
           data-top="IT WORKED ON MY MACHINE"
-          data-bottom="DEPLOY IT ANYWAY">
-          💻 Developer
-        </button>
+          data-bottom="DEPLOY IT ANYWAY">💻 Developer</button>
 
-        <button type="button"
-          class="template"
-          data-bg="#9a5738"
-          data-emoji="📚"
+        <button type="button" class="template"
+          data-bg="#9a5738" data-emoji="📚"
           data-top="EXAM TOMORROW"
-          data-bottom="START STUDYING AT 2 AM">
-          📚 Student
-        </button>
+          data-bottom="START STUDYING AT 2 AM">📚 Student</button>
 
-        <button type="button"
-          class="template"
-          data-bg="#b13f83"
-          data-emoji="🎉"
+        <button type="button" class="template"
+          data-bg="#b13f83" data-emoji="🎉"
           data-top="FRIDAY IS HERE"
-          data-bottom="MONDAY IS LOADING">
-          🎉 Weekend
-        </button>
+          data-bottom="MONDAY IS LOADING">🎉 Weekend</button>
 
-        <button type="button"
-          class="template"
-          data-bg="#35466f"
-          data-emoji="✨"
+        <button type="button" class="template"
+          data-bg="#35466f" data-emoji="✨"
           data-top="EXPECTATIONS"
-          data-bottom="REALITY">
-          ✨ Classic
-        </button>
+          data-bottom="REALITY">✨ Classic</button>
       </div>
 
       <p class="small-note">
@@ -366,7 +301,6 @@
       </p>
     </section>
 
-    <!-- LIVE PREVIEW -->
     <section class="panel">
       <h2>Meme Preview <span class="live">LIVE</span></h2>
 
@@ -381,26 +315,17 @@
       </p>
 
       <div class="downloads">
-        <button type="button" id="pngBtn" class="primary">
-          ⬇️ Download PNG
-        </button>
-
-        <button type="button" id="gifBtn">
-          🎞️ Download GIF
-        </button>
-
-        <button type="button" id="videoBtn">
-          🎬 Download Video
-        </button>
+        <button type="button" id="pngBtn" class="primary">⬇️ Download PNG</button>
+        <button type="button" id="gifBtn">🎞️ Download GIF</button>
+        <button type="button" id="videoBtn">🎬 Download Video</button>
       </div>
 
       <p class="small-note">
-        GIF export requires the GIF library and its worker file.
+        GIF export requires gif.js and its worker file.
         Video export depends on browser support.
       </p>
     </section>
 
-    <!-- MEME CUSTOMIZATION -->
     <section class="panel">
       <h2>✍️ Customize Your Meme</h2>
 
@@ -408,30 +333,17 @@
       <input type="file" id="imageInput" accept="image/*">
 
       <label for="topText">Top Caption</label>
-      <input
-        type="text"
-        id="topText"
-        maxlength="160"
+      <input type="text" id="topText" maxlength="160"
         value="WHEN LIFE GIVES YOU BUGS"
         placeholder="Enter top caption">
 
       <label for="bottomText">Bottom Caption</label>
-      <input
-        type="text"
-        id="bottomText"
-        maxlength="160"
+      <input type="text" id="bottomText" maxlength="160"
         value="CALL IT A FEATURE"
         placeholder="Enter bottom caption">
 
-      <label for="fontSize">
-        Text Size: <span id="sizeValue">38</span> px
-      </label>
-      <input
-        type="range"
-        id="fontSize"
-        min="18"
-        max="58"
-        value="38">
+      <label for="fontSize">Text Size: <span id="sizeValue">38</span> px</label>
+      <input type="range" id="fontSize" min="18" max="58" value="38">
 
       <label for="textColor">Text Color</label>
       <input type="color" id="textColor" value="#ffffff">
@@ -459,17 +371,11 @@
       </select>
 
       <div class="actions">
-        <button type="button" id="resetBtn">
-          🔄 Reset
-        </button>
-
-        <button type="button" id="clearPhotoBtn">
-          🗑️ Remove Photo
-        </button>
+        <button type="button" id="resetBtn">🔄 Reset</button>
+        <button type="button" id="clearPhotoBtn">🗑️ Remove Photo</button>
       </div>
     </section>
 
-    <!-- FUNNY MEME STUDIO -->
     <section class="panel" id="funnyMemePanel">
       <h2>😂 Funny Meme Studio</h2>
 
@@ -479,7 +385,6 @@
       </p>
 
       <label for="funnyCategory">Choose Your Comedy</label>
-
       <select id="funnyCategory">
         <option value="college">🎓 College Life</option>
         <option value="exam">📚 Exam Comedy</option>
@@ -495,10 +400,7 @@
         <option value="random">🎲 Random Funny</option>
       </select>
 
-      <button
-        type="button"
-        id="funnyGenerate"
-        class="primary full">
+      <button type="button" id="funnyGenerate" class="primary full">
         😂 Generate Funny Caption
       </button>
 
@@ -509,17 +411,11 @@
 
   </main>
 
-  <footer>
-    Made with ❤️ using HTML, CSS and JavaScript
-  </footer>
+  <footer>Made with ❤️ using HTML, CSS and JavaScript</footer>
 
-  <!-- GIF library must load before script.js -->
+  <!-- Load GIF library before script.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
-
-  <!-- Main meme editor -->
   <script src="script.js"></script>
-
-  <!-- Funny caption generator -->
   <script src="funny.js"></script>
 </body>
 </html>
