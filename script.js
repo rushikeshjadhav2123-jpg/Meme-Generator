@@ -451,3 +451,299 @@ document.addEventListener("DOMContentLoaded", () => {
   drawMeme();
   setStatus("Ready! Upload a photo or choose a template.");
 });
+
+/* ==========================================
+   FUNNY MEME MODE — NO API REQUIRED
+   Marathi + Hinglish | Comedy + Savage Roast
+   Works with existing Meme Generator IDs
+   ========================================== */
+
+(() => {
+  "use strict";
+
+  function initFunnyMemeMode() {
+    const canvas = document.getElementById("memeCanvas");
+    const topInput = document.getElementById("topText");
+    const bottomInput = document.getElementById("bottomText");
+
+    if (!canvas || !topInput || !bottomInput) {
+      console.warn("Funny Meme Mode: Existing editor fields not found.");
+      return;
+    }
+
+    if (document.getElementById("funnyMemePanel")) return;
+
+    const captions = {
+      "College Life": [
+        ["College la time var pahochlo", "Pan lecture cancel hota 💀"],
+        ["Assignment उद्या submit आहे", "Mi अजून topic शोधतोय 😂"],
+        ["Sir: Any questions?", "Me: Sir, attendance milel ka? 🤡"],
+        ["College friends: Group study", "Actual: Group gossip 😂"],
+        ["Practical file complete?", "Cover page ekdam mast aahe 😎"],
+        ["Backlog cha tension nako", "Aplyakade confidence bharpur aahe 💀"]
+      ],
+      "Exam": [
+        ["Syllabus 100% baki", "Confidence 200% 😂"],
+        ["Exam उद्या आहे", "Abhyas उद्यापासून करणार 🤡"],
+        ["Question paper baghitla", "Aata devach vachavel 🙏"],
+        ["Friend: Kiti abhyas zala?", "Me: Pen bharpur chalavla 😂"],
+        ["Easy paper aahe mhanale", "Mag mala kay zala? 💀"],
+        ["One night before exam", "YouTube: 10 hour study music 🎧"]
+      ],
+      "Savage Roast": [
+        ["Tujha attitude baghun", "WiFi pan disconnect zala 😂"],
+        ["Tu khup special ahes", "Asa error roj yet nahi 🤡"],
+        ["Tujhi logic aikun", "Calculator ne resign dila 💀"],
+        ["Confidence tar bagh", "Talent loading... 1% 😂"],
+        ["Tu silent raha", "Mystery peksha comedy jast aahe 🤣"],
+        ["Tujha plan ek number", "Execution airplane mode var 😭"]
+      ],
+      "Friends": [
+        ["Best friend: 5 minute madhe yeto", "2 taas nantar: kuthe ahes? 😂"],
+        ["Friend la secret sangitla", "Aata purna group la mahit aahe 💀"],
+        ["Bill ala ki best friend", "Network problem madhe jato 🤡"],
+        ["Friend: Bhau, serious bolaychay", "Mag 2 taas bakchodi 😂"],
+        ["Group photo madhe", "Ek jan tari dole band karto 😭"]
+      ],
+      "Marathi": [
+        ["Aai: Abhyas zala ka?", "Mi: Ho... manaat 😂"],
+        ["Aaj pasun diet suru", "Chaha sobat biscuit chaltat na? 🤡"],
+        ["Paise save karayche hote", "Pan vadapav disla 😭"],
+        ["Mi khup mature aahe", "Fakta 2 minute raga yeto 😂"],
+        ["Udya lavkar uthnar", "Alarm la pan mahit aahe khot aahe 💀"],
+        ["Aaj kahi kaam nahi", "Pan thaklo full day 😂"]
+      ],
+      "Everyday": [
+        ["Me: Aaj lavkar zopnar", "3 AM: One last reel 🤡"],
+        ["Salary / pocket money aali", "2 divsat: RIP balance 💸"],
+        ["Phone battery 1%", "Me: Ajun ek reel baghu 😂"],
+        ["Monday motivation", "Tuesday la gayab 💀"],
+        ["Plan: Productive day", "Reality: Bed + phone 😭"],
+        ["Me opening fridge again", "Maybe new food spawned 😂"]
+      ]
+    };
+
+    const style = document.createElement("style");
+    style.textContent = `
+      #funnyMemePanel {
+        margin: 18px 0;
+        padding: 18px;
+        border: 1px solid #d8d9e8;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #fff7ed, #f5f3ff);
+        color: #202033;
+        font-family: system-ui, sans-serif;
+        box-sizing: border-box;
+        width: 100%;
+      }
+      #funnyMemePanel * { box-sizing: border-box; }
+      #funnyMemePanel .fm-title {
+        font-size: 21px;
+        font-weight: 800;
+        margin-bottom: 5px;
+      }
+      #funnyMemePanel .fm-sub {
+        font-size: 13px;
+        color: #666477;
+        margin-bottom: 14px;
+      }
+      #funnyMemePanel .fm-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 12px;
+      }
+      #funnyMemePanel select,
+      #funnyMemePanel button {
+        min-height: 42px;
+        padding: 10px 12px;
+        border: 1px solid #d6d3e2;
+        border-radius: 10px;
+        font: inherit;
+        font-size: 14px;
+      }
+      #funnyMemePanel select {
+        flex: 1 1 145px;
+        min-width: 0;
+        background: white;
+        color: #202033;
+      }
+      #funnyMemePanel button {
+        cursor: pointer;
+        font-weight: 700;
+      }
+      #funnyGenerate {
+        background: #6d28d9;
+        color: white;
+        border-color: #6d28d9;
+        flex: 1 1 150px;
+      }
+      #funnyRandom {
+        background: #fff;
+        color: #202033;
+        flex: 1 1 130px;
+      }
+      #funnyMemePanel .fm-quick {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+      #funnyMemePanel .fm-quick button {
+        background: white;
+        color: #4c1d95;
+      }
+      #funnyMemePanel button:active {
+        transform: scale(.97);
+      }
+      #funnyMemePanel .fm-status {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #51436c;
+        min-height: 18px;
+      }
+      @media (max-width: 480px) {
+        #funnyMemePanel { padding: 13px; }
+        #funnyMemePanel .fm-title { font-size: 19px; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    const panel = document.createElement("section");
+    panel.id = "funnyMemePanel";
+    panel.innerHTML = `
+      <div class="fm-title">😂 Funny Meme Studio</div>
+      <div class="fm-sub">
+        No API • No API key • Built-in Marathi + Hinglish jokes
+      </div>
+
+      <div class="fm-controls">
+        <select id="funnyCategory" aria-label="Funny meme category">
+          ${Object.keys(captions).map(category =>
+            `<option value="${category}">${category}</option>`
+          ).join("")}
+        </select>
+
+        <select id="funnyMood" aria-label="Comedy style">
+          <option value="both">Comedy + Roast 🤣</option>
+          <option value="comedy">Only Comedy 😂</option>
+          <option value="roast">Savage Roast 🔥</option>
+        </select>
+      </div>
+
+      <div class="fm-controls">
+        <button id="funnyGenerate" type="button">
+          🎲 Generate Funny Meme
+        </button>
+        <button id="funnyRandom" type="button">
+          🔀 Surprise Me
+        </button>
+      </div>
+
+      <div class="fm-quick">
+        <button type="button" data-category="College Life">🎓 College</button>
+        <button type="button" data-category="Exam">📚 Exam</button>
+        <button type="button" data-category="Savage Roast">🔥 Roast</button>
+        <button type="button" data-category="Marathi">💙 Marathi</button>
+        <button type="button" data-category="Friends">🫂 Friends</button>
+      </div>
+
+      <div id="funnyStatus" class="fm-status" aria-live="polite">
+        Select a category and generate a meme!
+      </div>
+    `;
+
+    // Place the new panel after the existing canvas.
+    canvas.insertAdjacentElement("afterend", panel);
+
+    const categorySelect = panel.querySelector("#funnyCategory");
+    const moodSelect = panel.querySelector("#funnyMood");
+    const status = panel.querySelector("#funnyStatus");
+
+    let previousIndex = -1;
+
+    function redrawExistingCanvas() {
+      // Uses the redraw function from your existing script, if available.
+      if (typeof window.drawMeme === "function") {
+        window.drawMeme();
+      } else {
+        // Trigger the existing input listeners without replacing their code.
+        topInput.dispatchEvent(new Event("input", { bubbles: true }));
+        bottomInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    }
+
+    function generateMeme(randomCategory = false) {
+      let category = categorySelect.value;
+
+      if (randomCategory) {
+        const allCategories = Object.keys(captions);
+        category = allCategories[
+          Math.floor(Math.random() * allCategories.length)
+        ];
+        categorySelect.value = category;
+      }
+
+      let options = captions[category] || captions["Everyday"];
+      const mood = moodSelect.value;
+
+      if (mood === "roast") {
+        options = captions["Savage Roast"];
+      } else if (mood === "comedy" && category === "Savage Roast") {
+        options = captions["Everyday"];
+      }
+
+      let index;
+
+      if (options.length > 1) {
+        do {
+          index = Math.floor(Math.random() * options.length);
+        } while (index === previousIndex);
+      } else {
+        index = 0;
+      }
+
+      previousIndex = index;
+
+      const joke = options[index];
+      topInput.value = joke[0];
+      bottomInput.value = joke[1];
+
+      redrawExistingCanvas();
+
+      status.textContent = `🤣 New meme ready! Category: ${category}`;
+    }
+
+    panel.querySelector("#funnyGenerate").addEventListener("click", () => {
+      generateMeme(false);
+    });
+
+    panel.querySelector("#funnyRandom").addEventListener("click", () => {
+      generateMeme(true);
+    });
+
+    panel.querySelectorAll("[data-category]").forEach(button => {
+      button.addEventListener("click", () => {
+        categorySelect.value = button.dataset.category;
+        generateMeme(false);
+      });
+    });
+
+    // Update captions using the existing editor's normal input events.
+    topInput.addEventListener("input", () => {
+      status.textContent = "Caption edited ✍️";
+    });
+
+    bottomInput.addEventListener("input", () => {
+      status.textContent = "Caption edited ✍️";
+    });
+
+    console.log("Funny Meme Studio loaded successfully!");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initFunnyMemeMode);
+  } else {
+    initFunnyMemeMode();
+  }
+})();
+
