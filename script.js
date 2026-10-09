@@ -18,40 +18,58 @@ fabric.Object.prototype.cornerSize = 10;
 // Keep the original 600 x 600 canvas coordinates.
 // Resize its displayed size for mobile and desktop.
 function resizeMemeCanvas() {
-  const workspace = document.querySelector(".canvas-workspace");
-  const card = document.querySelector(".canvas-card");
-  const container = canvas.wrapperEl;
-  if (!workspace || !card || !container) return;
-  const mobile = window.matchMedia("(max-width: 650px)").matches;
-  const availableWidth = Math.max(
-    160,
-    Math.min(card.clientWidth - 12, workspace.clientWidth - 16)
-  );
-  const availableHeight = mobile
-    ? Math.min(window.innerHeight * 0.60, 500)
-    : 650;
-  const scale = Math.min(
-    availableWidth / 600,
-    availableHeight / 600,
-    1
-  );
-  const displaySize = Math.max(160, Math.round(600 * scale));
-  container.style.width = displaySize + "px";
-  container.style.height = displaySize + "px";
-  container.style.maxWidth = "100%";
-  // CSS-only resizing preserves the logical canvas dimensions.
-  canvas.setDimensions(
-    { width: displaySize, height: displaySize },
-    { cssOnly: true }
-  );
-  canvas.calcOffset();
-  canvas.requestRenderAll();
+const workspace = document.querySelector(”.canvas-workspace”);
+const card = document.querySelector(”.canvas-card”);
+const container = canvas.wrapperEl;
+
+if (!workspace || !card || !container) return;
+
+const mobile = window.matchMedia(”(max-width: 650px)”).matches;
+
+if (mobile) {
+const availableWidth = Math.max(
+160,
+Math.min(
+workspace.clientWidth - 24,
+card.clientWidth - 16,
+window.innerWidth - 32
+)
+);
+
+const scale = Math.min(availableWidth / 600, 1);
+const displaySize = Math.round(600 * scale);
+container.style.width = displaySize + "px";
+container.style.height = displaySize + "px";
+container.style.margin = "0 auto";
+canvas.setDimensions(
+  { width: displaySize, height: displaySize },
+  { cssOnly: true }
+);
+
+} else {
+container.style.width = “600px”;
+container.style.height = “600px”;
+container.style.margin = “0 auto”;
+
+canvas.setDimensions(
+  { width: 600, height: 600 },
+  { cssOnly: true }
+);
+
 }
-window.addEventListener("resize", resizeMemeCanvas);
-window.addEventListener("orientationchange", () => {
-  setTimeout(resizeMemeCanvas, 300);
+
+container.style.maxWidth = “100%”;
+
+canvas.calcOffset();
+canvas.requestRenderAll();
+}
+
+window.addEventListener(“resize”, resizeMemeCanvas);
+
+window.addEventListener(“orientationchange”, () => {
+setTimeout(resizeMemeCanvas, 300);
 });
-// Run after the page layout has loaded.
+
 requestAnimationFrame(resizeMemeCanvas);
 /* =========================================
    NAVIGATION TABS
