@@ -1,106 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#10101d">
-  <title>MemeAI Studio — AI Meme Generator</title>
+  <title>MemeStudio - Free Meme Generator</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/">😂 MemeAI <span>STUDIO</span></a>
-    <span class="status"><i></i> AI CREATIVE STUDIO</span>
+    <h1>😂 Meme<span>Studio</span></h1>
+    <p>Free Meme Generator · No API Key</p>
   </header>
-
-  <main class="layout">
-    <section class="intro">
-      <p class="eyebrow">YOUR IDEAS. INSTANT MEMES.</p>
-      <h1>Make something<br><span>hilariously relatable.</span></h1>
-      <p class="subtitle">
-        Upload a photo, describe your idea, and let AI create your next meme.
+  <main class="container">
+    <section class="editor panel">
+      <h2>✨ Create Your Meme</h2>
+      <label for="prompt">Describe your meme</label>
+      <textarea id="prompt" maxlength="200">When the teacher announces a surprise test</textarea>
+      <label>Choose a mood</label>
+      <div class="moods">
+        <button class="mood active" data-mood="funny">😂 Funny</button>
+        <button class="mood" data-mood="sarcastic">😏 Sarcastic</button>
+        <button class="mood" data-mood="relatable">🥲 Relatable</button>
+        <button class="mood" data-mood="savage">🔥 Savage</button>
+      </div>
+      <label>Ready-made templates</label>
+      <div id="templateGrid" class="templates"></div>
+      <label for="topText">Top caption</label>
+      <input id="topText" value="TEACHER: SURPRISE TEST TODAY">
+      <label for="bottomText">Bottom caption</label>
+      <input id="bottomText" value="MY SOUL LEFT THE BODY 💀">
+      <div class="settings">
+        <div>
+          <label for="textColor">Text colour</label>
+          <input id="textColor" type="color" value="#ffffff">
+        </div>
+        <div class="font-setting">
+          <label for="fontSize">Font size: <span id="fontSizeValue">34 px</span></label>
+          <input id="fontSize" type="range" min="18" max="56" value="34">
+        </div>
+      </div>
+      <div class="checks">
+        <label><input id="uppercase" type="checkbox" checked> Uppercase</label>
+        <label><input id="outline" type="checkbox" checked> Black outline</label>
+      </div>
+      <button id="generateBtn" class="primary">✨ Make My Meme</button>
+      <button id="resetBtn" class="secondary">↺ Reset</button>
+      <hr>
+      <h3>Find real reaction photos</h3>
+      <p class="hint">Internet required. Photo availability and licences vary.</p>
+      <button id="searchPhotos" class="secondary">🔎 Search Free Photos</button>
+      <div id="photoResults" class="photo-results"></div>
+    </section>
+    <section class="preview panel">
+      <h2>🎨 Your Meme</h2>
+      <div class="canvas-wrap">
+        <canvas id="memeCanvas" width="900" height="650"></canvas>
+      </div>
+      <button id="downloadBtn" class="primary">⬇ Download PNG</button>
+      <button id="copyBtn" class="secondary">Copy Captions</button>
+      <p id="photoCredit" class="hint">
+        Built-in template — no external image needed.
       </p>
+      <a id="sourceLink" class="hidden" target="_blank" rel="noopener noreferrer">View photo source ↗</a>
+      <p id="status" role="status">Ready to make something funny.</p>
     </section>
-
-    <section class="editor">
-      <div class="panel controls">
-        <h2>Create your meme</h2>
-
-        <label for="imageInput">01 — Upload image</label>
-        <label class="upload" for="imageInput">
-          <span class="upload-icon">＋</span>
-          <strong id="uploadTitle">Choose an image</strong>
-          <small id="uploadInfo">PNG, JPG or WEBP</small>
-        </label>
-        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp">
-
-        <label for="idea">02 — Describe your meme</label>
-        <textarea id="idea" maxlength="1000"
-          placeholder="Example: When you study all night but forget everything in the exam..."></textarea>
-
-        <label for="mood">03 — Choose a mood</label>
-        <select id="mood">
-          <option value="Funny">😂 Funny</option>
-          <option value="Sarcastic">😏 Sarcastic</option>
-          <option value="Relatable">🥲 Relatable</option>
-          <option value="Dark humor">🖤 Dark humor</option>
-          <option value="Wholesome">💛 Wholesome</option>
-          <option value="Savage">🔥 Savage</option>
-        </select>
-
-        <button id="generateButton" class="primary">✨ Generate with AI</button>
-        <p id="status" class="status-message" role="status" aria-live="polite">
-          Upload an image to get started.
-        </p>
-
-        <div class="manual-edit">
-          <h3>Customize your captions</h3>
-          <label for="topText">Top text</label>
-          <input id="topText" maxlength="180" placeholder="TOP TEXT">
-          <label for="bottomText">Bottom text</label>
-          <input id="bottomText" maxlength="180" placeholder="BOTTOM TEXT">
-
-          <div class="two-columns">
-            <div>
-              <label for="textColor">Text color</label>
-              <input id="textColor" type="color" value="#ffffff">
-            </div>
-            <div>
-              <label for="fontSize">Text size</label>
-              <input id="fontSize" type="range" min="18" max="64" value="38">
-            </div>
-          </div>
-          <button id="redrawButton" class="secondary">Update preview</button>
-          <button id="downloadButton" class="secondary">⬇ Download PNG</button>
-        </div>
-      </div>
-
-      <div class="panel preview-panel">
-        <div class="preview-heading">
-          <div>
-            <p class="eyebrow">LIVE CANVAS</p>
-            <h2>Your masterpiece</h2>
-          </div>
-          <span class="preview-tag">PNG EXPORT</span>
-        </div>
-
-        <div class="canvas-wrap">
-          <div id="emptyState">
-            <span>🎨</span>
-            <strong>Your meme appears here</strong>
-            <small>Upload a photo to begin creating.</small>
-          </div>
-          <canvas id="memeCanvas" width="800" height="600" hidden></canvas>
-        </div>
-
-        <p class="hint">Edit your captions on the left, then update the preview.</p>
-      </div>
-    </section>
-
-    <footer>MEMEAI STUDIO · CREATE · LAUGH · SHARE</footer>
   </main>
-
-  <script src="script.js"></script>
+  <footer>Made for meme lovers ❤️ · Free browser-based tool</footer>
 </body>
 </html>
