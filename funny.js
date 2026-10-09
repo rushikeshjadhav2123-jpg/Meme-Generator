@@ -1,10 +1,4 @@
 
-/* =========================================
-   FUNNY MEME STUDIO
-   Marathi + Hinglish | Comedy + Savage Roast
-   No API key required
-   ========================================= */
-
 document.addEventListener("DOMContentLoaded", function () {
   const topInput = document.getElementById("topText");
   const bottomInput = document.getElementById("bottomText");
@@ -14,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!topInput || !bottomInput || !categorySelect ||
       !generateBtn || !status) {
-    console.error("Funny Meme Studio: Required HTML elements missing.");
+    console.error("Funny Meme Studio: HTML elements missing.");
     return;
   }
 
@@ -24,17 +18,17 @@ document.addEventListener("DOMContentLoaded", function () {
       ["GROUP STUDY SURU KELI", "2 TAAS FAKTA GOSSIP 🤣"],
       ["ASSIGNMENT UDYAA AAHE", "MI AJUN TITLE LIHITOY 💀"],
       ["COLLEGE CHA FULL CONFIDENCE", "SYLLABUS CHA ZERO KNOWLEDGE 🤡"],
-      ["FRIENDS SOBAT COLLEGE", "LECTURE PEKSHA CANTEEN IMPORTANT 😂"],
-      ["SIR: KUTHE HOTAS?", "ME: SIR, MENTALLY PRESENT HOTO 😭"]
+      ["LECTURE PEKSHA", "CANTEEN JAST IMPORTANT 😂"],
+      ["SIR: KUTHE HOTAS?", "MENTALLY PRESENT HOTO 😭"]
     ],
 
     exam: [
       ["SYLLABUS 100% BAKI", "CONFIDENCE 200% 😂"],
       ["EXAM UDYAA AAHE", "ABHYAS UDYAPASUN 🤡"],
       ["QUESTION PAPER BAGHITLA", "DEVACH VACHAVNAR 🙏"],
-      ["FRIEND: KITI ABHYAS ZALA?", "ME: PEN CHALAVLA BHAU 😂"],
+      ["FRIEND: KITI ABHYAS ZALA?", "PEN CHALAVLA BHAU 😂"],
       ["EASY PAPER MHANAT HOTE", "MAG MAJHA PAPER VEGALA HOTA KA? 💀"],
-      ["ONE NIGHT BEFORE EXAM", "YOUTUBE VAR 10 HOUR REVISION 😭"]
+      ["ONE NIGHT BEFORE EXAM", "10 HOUR REVISION VIDEO 😭"]
     ],
 
     roast: [
@@ -43,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ["TUJHA PLAN EK NUMBER", "EXECUTION AIRPLANE MODE 🤡"],
       ["TUJHI LOGIC AIKUN", "CALCULATOR NE RESIGN DILA 🤣"],
       ["TU GENIUS AHES BHAU", "PAN RESULT HIDDEN AAHE 😂"],
-      ["TUJHA CONFIDENCE HEAVY", "FACTS MATRA ON LEAVE 💀"]
+      ["CONFIDENCE HEAVY", "FACTS MATRA ON LEAVE 💀"]
     ],
 
     marathi: [
@@ -60,8 +54,56 @@ document.addEventListener("DOMContentLoaded", function () {
       ["FRIEND LA SECRET SANGITLA", "AATA PURNA GROUP LA MAHIT 💀"],
       ["BILL AALA KI BEST FRIEND", "NETWORK PROBLEM 🤡"],
       ["FRIEND: SERIOUS BOLAYCHAY", "MAG 2 TAAS BAKCHODI 🤣"],
-      ["PHOTO KADH BHAU", "100 PHOTOS, EK PAN PERFECT NAHI 😂"],
+      ["100 PHOTOS KADHLE", "EK PAN PERFECT NAHI 😂"],
       ["ONLINE DISATOS", "REPLY MATRA NEXT WEEK 😭"]
+    ],
+
+    relationship: [
+      ["SHE SAID WE NEED TO TALK", "MY SOUL LEFT THE BODY 💀"],
+      ["ONLINE 24/7", "REPLY AFTER 3 BUSINESS DAYS 😂"],
+      ["CRUSH NE HI BOLA", "MI LAGNACHE SWAPNA BAGHITLE 🤡"],
+      ["LOVE AT FIRST SIGHT", "BLOCK AT SECOND SIGHT 😭"],
+      ["STATUS TAKLA CRUSH SATHI", "CRUSH LA KAHICH FARAK NAHI 😂"]
+    ],
+
+    family: [
+      ["AAI: PHONE THEV KHALLI YE", "MI: LAST REEL AAI 😭"],
+      ["RELATIVES: RESULT KAY LAGLA?", "WIFI PAN BAND ZALA 💀"],
+      ["GHARI GUEST AALYAT", "ROOM MADHE INVISIBLE MODE 🤣"],
+      ["AAI: MARKET MADHUN YE", "MI: GOOGLE MAPS PAN CONFUSED 😂"],
+      ["BABANCHA EK LOOK", "FULL SYSTEM SHUTDOWN 🤐"]
+    ],
+
+    money: [
+      ["SALARY CREDIT ZALI", "EMI NE HI BOLUN GHEUN GELI 💸"],
+      ["BANK BALANCE CHECK KELA", "AATA FAKTA PRARTHANA 🙏"],
+      ["ME: THIS MONTH SAVING", "SALE: HELLO BRO 😂"],
+      ["FRIEND: PARTY DE", "ME: UPI SERVER DOWN 💀"],
+      ["RICH MINDSET", "POCKET MADHE 12 RUPEES 🤡"]
+    ],
+
+    gaming: [
+      ["PRO PLAYER IN MY DREAMS", "NOOB IN REALITY 🎮"],
+      ["ONE LAST MATCH", "SUNRISE ZALA BHAU 🌅"],
+      ["TEAM: COVER ME", "MI FIRST OUT 😂"],
+      ["PING 999 MS", "BLAME THE TEAM 💀"],
+      ["CHICKEN DINNER PAHIJE", "AADHI MAGGI TAR BANAV 🍜"]
+    ],
+
+    office: [
+      ["BOSS: QUICK MEETING", "MY LUNCH BREAK RIP 💀"],
+      ["WORK FROM HOME", "BED FROM WORK 😂"],
+      ["MONDAY MOTIVATION", "5 MINUTES LATE AGAIN 🤡"],
+      ["EXCEL OPEN KELA", "LIFE CHI VALUE KALALI 😭"],
+      ["BOSS: ANY UPDATES?", "ME: YES, I AM STRESSED 💻"]
+    ],
+
+    savage: [
+      ["TUJHA ATTITUDE SKY HIGH", "ACHIEVEMENTS AIRPLANE MODE 💀"],
+      ["TUJHI ENTRY HERO SARAKHI", "EXIT MATRA EXTRA SARAKHA 😂"],
+      ["TUJHA BRAIN FAST AAHE", "PAN NETWORK CONNECT HOT NAHI 🤡"],
+      ["TUJHA SWAG HEAVY", "PAN LOGIC MISSING 😭"],
+      ["ROAST KARAYLA GELO", "TU AADHICH SELF-ROAST KELAS 🤣"]
     ],
 
     random: [
@@ -71,47 +113,40 @@ document.addEventListener("DOMContentLoaded", function () {
       ["PLAN: PRODUCTIVE DAY", "REALITY: BED ANI PHONE 😭"],
       ["EXPECTATION: BILLIONAIRE", "REALITY: BALANCE CHECK 😂"],
       ["LIFE SET KARAYCHI AAHE", "PAN FIRST CHAI PAHIJE ☕"],
-      ["ME: NO MORE ONLINE SHOPPING", "ALSO ME: ORDER PLACED 💸"]
+      ["ME: NO MORE SHOPPING", "ALSO ME: ORDER PLACED 💸"]
     ]
   };
 
-  let previousIndex = -1;
+  let lastIndex = {};
 
   function generateCaption() {
-    const selectedCategory = categorySelect.value;
-    const list = captions[selectedCategory] || captions.random;
+    const category = categorySelect.value;
+    const list = captions[category] || captions.random;
 
-    let index = Math.floor(Math.random() * list.length);
+    let index;
+    do {
+      index = Math.floor(Math.random() * list.length);
+    } while (list.length > 1 && index === lastIndex[category]);
 
-    // Try not to repeat the last caption.
-    if (list.length > 1) {
-      while (index === previousIndex) {
-        index = Math.floor(Math.random() * list.length);
-      }
-    }
+    lastIndex[category] = index;
 
-    previousIndex = index;
+    topInput.value = list[index][0];
+    bottomInput.value = list[index][1];
 
-    const joke = list[index];
-
-    topInput.value = joke[0];
-    bottomInput.value = joke[1];
-
-    // Notify the existing meme editor to redraw the canvas.
     topInput.dispatchEvent(new Event("input", { bubbles: true }));
     bottomInput.dispatchEvent(new Event("input", { bubbles: true }));
 
-    status.textContent = "🤣 Funny caption ready! Check your meme preview.";
+    status.textContent =
+      "😂 Funny caption ready! Check your meme preview.";
   }
 
   generateBtn.addEventListener("click", generateCaption);
 
-  // Show a random meme when the user chooses Random Funny.
   categorySelect.addEventListener("change", function () {
     if (categorySelect.value === "random") {
       generateCaption();
     }
   });
 
-  console.log("😂 Funny Meme Studio loaded successfully!");
+  console.log("Funny Meme Studio loaded successfully!");
 });
