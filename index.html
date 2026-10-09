@@ -3,56 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Canva-Style Ultimate Meme Editor</title>
+
+  <!-- Original CSS -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Modern UI Upgrade CSS -->
+  <link rel="stylesheet" href="upgrade.css">
+
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Fabric.js Library CDN -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Fabric.js Canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 </head>
+
 <body>
 
   <!-- Top Navigation Bar -->
   <header class="navbar">
+
     <div class="logo">
-      <i class="fa-solid fa-wand-magic-sparkles"></i> MEME STUDIO <span>PRO</span>
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      MEME STUDIO <span>PRO</span>
     </div>
 
     <div class="header-center">
-      <button id="btnUndo" class="icon-btn" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
-      <button id="btnRedo" class="icon-btn" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
-      <button id="btnClear" class="icon-btn btn-danger-icon" title="Clear Canvas"><i class="fa-solid fa-trash-can"></i></button>
+      <button id="btnUndo" class="icon-btn" title="Undo">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+
+      <button id="btnRedo" class="icon-btn" title="Redo">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+
+      <button id="btnClear" class="icon-btn btn-danger-icon" title="Clear Canvas">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
     </div>
 
     <div class="top-actions">
-      <button id="saveProjectBtn" class="btn btn-secondary"><i class="fa-solid fa-floppy-disk"></i> Save JSON</button>
-      <label for="loadProjectInput" class="btn btn-secondary"><i class="fa-solid fa-folder-open"></i> Load JSON</label>
-      <input type="file" id="loadProjectInput" accept=".json" style="display:none;">
-      
-      <button id="copyBtn" class="btn btn-secondary"><i class="fa-regular fa-copy"></i> Copy</button>
-      <button id="downloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Export HD</button>
+
+      <button id="saveProjectBtn" class="btn btn-secondary">
+        <i class="fa-solid fa-floppy-disk"></i> Save JSON
+      </button>
+
+      <label for="loadProjectInput" class="btn btn-secondary">
+        <i class="fa-solid fa-folder-open"></i> Load JSON
+      </label>
+
+      <input type="file" id="loadProjectInput" accept=".json" hidden>
+
+      <button id="copyBtn" class="btn btn-secondary">
+        <i class="fa-regular fa-copy"></i> Copy
+      </button>
+
+      <button id="downloadBtn" class="btn btn-primary">
+        <i class="fa-solid fa-download"></i> Export HD
+      </button>
+
     </div>
   </header>
 
-  <!-- Main Application Body -->
+  <!-- Main Application -->
   <div class="app-container">
-    
-    <!-- Left Tools Navigation Bar -->
+
+    <!-- Left Tool Navigation -->
     <nav class="tool-tabs">
-      <button class="tool-btn active" data-target="templates"><i class="fa-solid fa-images"></i><span>Templates</span></button>
-      <button class="tool-btn" data-target="text"><i class="fa-solid fa-font"></i><span>Text</span></button>
-      <button class="tool-btn" data-target="stickers"><i class="fa-solid fa-face-smile"></i><span>Stickers</span></button>
-      <button class="tool-btn" data-target="draw"><i class="fa-solid fa-paint-brush"></i><span>Draw</span></button>
-      <button class="tool-btn" data-target="filters"><i class="fa-solid fa-sliders"></i><span>Filters</span></button>
-      <button class="tool-btn" data-target="layers"><i class="fa-solid fa-layer-group"></i><span>Layers</span></button>
+
+      <button class="tool-btn active" data-target="templates">
+        <i class="fa-solid fa-images"></i>
+        <span>Templates</span>
+      </button>
+
+      <button class="tool-btn" data-target="text">
+        <i class="fa-solid fa-font"></i>
+        <span>Text</span>
+      </button>
+
+      <button class="tool-btn" data-target="stickers">
+        <i class="fa-solid fa-face-smile"></i>
+        <span>Stickers</span>
+      </button>
+
+      <button class="tool-btn" data-target="draw">
+        <i class="fa-solid fa-paint-brush"></i>
+        <span>Draw</span>
+      </button>
+
+      <button class="tool-btn" data-target="filters">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Filters</span>
+      </button>
+
+      <button class="tool-btn" data-target="layers">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Layers</span>
+      </button>
+
     </nav>
 
-    <!-- Sidebar Control Panel -->
+    <!-- Sidebar -->
     <aside class="sidebar">
-      
-      <!-- 1. TEMPLATES & UPLOAD PANEL -->
+
+      <!-- Templates Panel -->
       <div class="panel active" id="panel-templates">
-        <h3>Background & Templates</h3>
+
+        <h3>Background &amp; Templates</h3>
+
         <div class="upload-zone" id="dropZone">
           <i class="fa-solid fa-cloud-arrow-up"></i>
           <p>Upload Custom Image</p>
@@ -60,43 +120,78 @@
         </div>
 
         <h4>Layouts</h4>
+
         <div class="grid-2">
-          <button class="preset-layout-btn" onclick="applyLayout('single')">Single Frame</button>
-          <button class="preset-layout-btn" onclick="applyLayout('2-panel-v')">2 Panel (Top/Bot)</button>
-          <button class="preset-layout-btn" onclick="applyLayout('2-panel-h')">2 Panel (Left/Right)</button>
-          <button class="preset-layout-btn" onclick="applyLayout('3-panel')">3 Panel Grid</button>
+          <button class="preset-layout-btn" onclick="applyLayout('single')">
+            Single Frame
+          </button>
+
+          <button class="preset-layout-btn" onclick="applyLayout('2-panel-v')">
+            2 Panel (Top/Bot)
+          </button>
+
+          <button class="preset-layout-btn" onclick="applyLayout('2-panel-h')">
+            2 Panel (Left/Right)
+          </button>
+
+          <button class="preset-layout-btn" onclick="applyLayout('3-panel')">
+            3 Panel Grid
+          </button>
         </div>
 
         <h4>Famous Presets</h4>
+
         <div class="preset-list">
-          <div class="preset-card" onclick="loadPreset('https://api.memegen.link/images/drake.png')">
+
+          <div class="preset-card"
+            onclick="loadPreset('https://api.memegen.link/images/drake.png')">
             <span>Drake Hotline Bling</span>
           </div>
-          <div class="preset-card" onclick="loadPreset('https://api.memegen.link/images/distracted.png')">
+
+          <div class="preset-card"
+            onclick="loadPreset('https://api.memegen.link/images/distracted.png')">
             <span>Distracted Boyfriend</span>
           </div>
-          <div class="preset-card" onclick="loadPreset('https://api.memegen.link/images/buttons.png')">
+
+          <div class="preset-card"
+            onclick="loadPreset('https://api.memegen.link/images/buttons.png')">
             <span>Two Buttons</span>
           </div>
-          <div class="preset-card" onclick="loadPreset('https://api.memegen.link/images/cmm.png')">
+
+          <div class="preset-card"
+            onclick="loadPreset('https://api.memegen.link/images/cmm.png')">
             <span>Change My Mind</span>
           </div>
-          <div class="preset-card" onclick="loadPreset('https://api.memegen.link/images/doge.png')">
+
+          <div class="preset-card"
+            onclick="loadPreset('https://api.memegen.link/images/doge.png')">
             <span>Doge</span>
           </div>
+
         </div>
       </div>
 
-      <!-- 2. TEXT PANEL -->
+      <!-- Text Panel -->
       <div class="panel" id="panel-text">
+
         <h3>Add Text</h3>
-        <button id="addHeadingBtn" class="btn btn-primary btn-block"><i class="fa-solid fa-plus"></i> Add Heading Text</button>
-        <button id="addMemeTextBtn" class="btn btn-secondary btn-block mt-2"><i class="fa-solid fa-plus"></i> Add Impact Meme Text</button>
+
+        <button id="addHeadingBtn" class="btn btn-primary btn-block">
+          <i class="fa-solid fa-plus"></i> Add Heading Text
+        </button>
+
+        <button id="addMemeTextBtn"
+          class="btn btn-secondary btn-block mt-2">
+          <i class="fa-solid fa-plus"></i> Add Impact Meme Text
+        </button>
 
         <hr>
+
         <h3>Text Properties</h3>
+
         <div class="form-group">
-          <label>Font Family</label>
+          <label for="fontFamily">Font Family</label>
+
           <select id="fontFamily">
             <option value="Impact">Impact (Classic)</option>
             <option value="Arial">Arial Black</option>
@@ -108,56 +203,97 @@
         </div>
 
         <div class="row">
+
           <div class="form-group">
-            <label>Text Color</label>
+            <label for="textColor">Text Color</label>
             <input type="color" id="textColor" value="#ffffff">
           </div>
+
           <div class="form-group">
-            <label>Stroke Color</label>
+            <label for="strokeColor">Stroke Color</label>
             <input type="color" id="strokeColor" value="#000000">
           </div>
+
         </div>
 
         <div class="form-group">
-          <label>Font Size</label>
+          <label for="fontSize">Font Size</label>
           <input type="range" id="fontSize" min="12" max="120" value="40">
         </div>
 
         <div class="form-group">
-          <label>Stroke Width</label>
+          <label for="strokeWidth">Stroke Width</label>
           <input type="range" id="strokeWidth" min="0" max="15" value="3">
         </div>
 
         <div class="form-group">
-          <label>Text Curve / Arc</label>
+          <label for="textCurvature">Text Curve / Arc</label>
           <input type="range" id="textCurvature" min="-100" max="100" value="0">
         </div>
+
       </div>
 
-      <!-- 3. STICKERS & SHAPES PANEL -->
+      <!-- Stickers Panel -->
       <div class="panel" id="panel-stickers">
-        <h3>Overlays & Accessories</h3>
+
+        <h3>Overlays &amp; Accessories</h3>
+
         <div class="sticker-grid">
-          <div class="sticker-item" onclick="addEmoji('🕶️')">🕶️ Thug Glasses</div>
-          <div class="sticker-item" onclick="addEmoji('🔥')">🔥 Fire</div>
-          <div class="sticker-item" onclick="addEmoji('😭')">😭 Crying Emoji</div>
-          <div class="sticker-item" onclick="addEmoji('🤡')">🤡 Clown</div>
-          <div class="sticker-item" onclick="addEmoji('💥')">💥 Boom</div>
-          <div class="sticker-item" onclick="addEmoji('💯')">💯 100</div>
+
+          <div class="sticker-item" onclick="addEmoji('🕶️')">
+            🕶️ Thug Glasses
+          </div>
+
+          <div class="sticker-item" onclick="addEmoji('🔥')">
+            🔥 Fire
+          </div>
+
+          <div class="sticker-item" onclick="addEmoji('😭')">
+            😭 Crying Emoji
+          </div>
+
+          <div class="sticker-item" onclick="addEmoji('🤡')">
+            🤡 Clown
+          </div>
+
+          <div class="sticker-item" onclick="addEmoji('💥')">
+            💥 Boom
+          </div>
+
+          <div class="sticker-item" onclick="addEmoji('💯')">
+            💯 100
+          </div>
+
         </div>
 
-        <h4>Speech Bubbles & Shapes</h4>
+        <h4>Speech Bubbles &amp; Shapes</h4>
+
         <div class="grid-2">
-          <button class="btn btn-outline" onclick="addShape('rect')">Square Box</button>
-          <button class="btn btn-outline" onclick="addShape('circle')">Red Circle</button>
-          <button class="btn btn-outline" onclick="addSpeechBubble('round')">Speech Bubble</button>
-          <button class="btn btn-outline" onclick="addArrow()">Arrow Pointer</button>
+
+          <button class="btn btn-outline" onclick="addShape('rect')">
+            Square Box
+          </button>
+
+          <button class="btn btn-outline" onclick="addShape('circle')">
+            Red Circle
+          </button>
+
+          <button class="btn btn-outline" onclick="addSpeechBubble('round')">
+            Speech Bubble
+          </button>
+
+          <button class="btn btn-outline" onclick="addArrow()">
+            Arrow Pointer
+          </button>
+
         </div>
       </div>
 
-      <!-- 4. DOODLE / DRAW PANEL -->
+      <!-- Drawing Panel -->
       <div class="panel" id="panel-draw">
+
         <h3>Freehand Brush</h3>
+
         <div class="form-group">
           <label class="switch-label">
             <span>Enable Brush Mode</span>
@@ -166,73 +302,111 @@
         </div>
 
         <div class="form-group">
-          <label>Brush Color</label>
+          <label for="brushColor">Brush Color</label>
           <input type="color" id="brushColor" value="#ff0055">
         </div>
 
         <div class="form-group">
-          <label>Brush Width</label>
+          <label for="brushWidth">Brush Width</label>
           <input type="range" id="brushWidth" min="1" max="50" value="10">
         </div>
+
       </div>
 
-      <!-- 5. FILTERS PANEL -->
+      <!-- Filters Panel -->
       <div class="panel" id="panel-filters">
+
         <h3>Image Adjustments</h3>
-        <button id="deepFriedBtn" class="btn btn-danger btn-block mb-3">🔥 Deep Fried Mode!</button>
+
+        <button id="deepFriedBtn" class="btn btn-danger btn-block mb-3">
+          🔥 Deep Fried Mode!
+        </button>
 
         <div class="form-group">
-          <label>Brightness</label>
-          <input type="range" id="filterBrightness" min="-1" max="1" step="0.05" value="0">
+          <label for="filterBrightness">Brightness</label>
+          <input type="range" id="filterBrightness"
+            min="-1" max="1" step="0.05" value="0">
         </div>
 
         <div class="form-group">
-          <label>Contrast</label>
-          <input type="range" id="filterContrast" min="-1" max="1" step="0.05" value="0">
+          <label for="filterContrast">Contrast</label>
+          <input type="range" id="filterContrast"
+            min="-1" max="1" step="0.05" value="0">
         </div>
 
         <div class="form-group">
-          <label>Saturation</label>
-          <input type="range" id="filterSaturate" min="-1" max="1" step="0.05" value="0">
+          <label for="filterSaturate">Saturation</label>
+          <input type="range" id="filterSaturate"
+            min="-1" max="1" step="0.05" value="0">
         </div>
 
         <div class="form-group">
-          <label>Blur</label>
-          <input type="range" id="filterBlur" min="0" max="1" step="0.05" value="0">
+          <label for="filterBlur">Blur</label>
+          <input type="range" id="filterBlur"
+            min="0" max="1" step="0.05" value="0">
         </div>
 
-        <button id="resetFiltersBtn" class="btn btn-outline btn-block mt-2">Reset Adjustments</button>
+        <button id="resetFiltersBtn"
+          class="btn btn-outline btn-block mt-2">
+          Reset Adjustments
+        </button>
+
       </div>
 
-      <!-- 6. LAYERS PANEL -->
+      <!-- Layers Panel -->
       <div class="panel" id="panel-layers">
+
         <h3>Layer Management</h3>
+
         <div id="layerList" class="layer-list-container">
-          <!-- Dynamically populated layers -->
+          <!-- Layers are populated by script.js -->
         </div>
 
         <hr>
+
         <h3>Active Object Actions</h3>
+
         <div class="grid-2">
-          <button class="btn btn-outline" id="btnBringForward"><i class="fa-solid fa-arrow-up"></i> Bring Up</button>
-          <button class="btn btn-outline" id="btnSendBackward"><i class="fa-solid fa-arrow-down"></i> Send Down</button>
-          <button class="btn btn-outline" id="btnDuplicate"><i class="fa-solid fa-clone"></i> Duplicate</button>
-          <button class="btn btn-danger" id="btnDeleteSelected"><i class="fa-solid fa-trash"></i> Delete</button>
+
+          <button class="btn btn-outline" id="btnBringForward">
+            <i class="fa-solid fa-arrow-up"></i> Bring Up
+          </button>
+
+          <button class="btn btn-outline" id="btnSendBackward">
+            <i class="fa-solid fa-arrow-down"></i> Send Down
+          </button>
+
+          <button class="btn btn-outline" id="btnDuplicate">
+            <i class="fa-solid fa-clone"></i> Duplicate
+          </button>
+
+          <button class="btn btn-danger" id="btnDeleteSelected">
+            <i class="fa-solid fa-trash"></i> Delete
+          </button>
+
         </div>
       </div>
 
     </aside>
 
-    <!-- Center Canvas Workspace -->
+    <!-- Canvas Workspace -->
     <main class="canvas-workspace">
+
       <div class="canvas-card">
         <canvas id="c"></canvas>
       </div>
-      <p class="hint-text"><i class="fa-solid fa-up-down-left-right"></i> Click any item to scale, rotate, edit text, or move on canvas.</p>
+
+      <p class="hint-text">
+        <i class="fa-solid fa-up-down-left-right"></i>
+        Click any item to scale, rotate, edit text, or move on canvas.
+      </p>
+
     </main>
 
   </div>
 
+  <!-- Original JavaScript: keep this file -->
   <script src="script.js"></script>
+
 </body>
 </html>
