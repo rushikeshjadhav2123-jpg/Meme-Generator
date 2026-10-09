@@ -541,3 +541,42 @@ input[type="checkbox"] {
     font-size: 10px;
   }
 }
+/* Mobile canvas overflow fix */
+@media (max-width: 650px) {
+  .canvas-workspace {
+    width: 100%;
+    min-width: 0;
+    padding: 8px;
+    overflow-x: auto;
+    align-items: flex-start;
+  }
+  .canvas-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 4px;
+    overflow: hidden;
+  }
+  .canvas-container {
+    max-width: 100% !important;
+  }
+  .canvas-card canvas {
+    max-width: 100% !important;
+    height: auto;
+  }
+  .navbar {
+    gap: 6px;
+  }
+  .logo {
+    font-size: 15px;
+  }
+  .top-actions {
+    max-width: 100%;
+    gap: 5px;
+  }
+  .top-actions .btn,
+  .top-actions label.btn {
+    font-size: 10px;
+    padding: 7px;
+  }
+}
