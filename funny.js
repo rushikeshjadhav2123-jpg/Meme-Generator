@@ -6,9 +6,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const generateBtn = document.getElementById("funnyGenerate");
   const status = document.getElementById("funnyStatus");
 
-  if (!topInput || !bottomInput || !categorySelect ||
-      !generateBtn || !status) {
-    console.error("Funny Meme Studio: HTML elements missing.");
+  if (
+    !topInput ||
+    !bottomInput ||
+    !categorySelect ||
+    !generateBtn ||
+    !status
+  ) {
+    console.error(
+      "Funny Meme Studio: Required HTML elements are missing."
+    );
     return;
   }
 
@@ -117,24 +124,34 @@ document.addEventListener("DOMContentLoaded", function () {
     ]
   };
 
-  let lastIndex = {};
+  const lastIndex = {};
 
   function generateCaption() {
     const category = categorySelect.value;
     const list = captions[category] || captions.random;
 
     let index;
+
     do {
       index = Math.floor(Math.random() * list.length);
-    } while (list.length > 1 && index === lastIndex[category]);
+    } while (
+      list.length > 1 &&
+      index === lastIndex[category]
+    );
 
     lastIndex[category] = index;
 
     topInput.value = list[index][0];
     bottomInput.value = list[index][1];
 
-    topInput.dispatchEvent(new Event("input", { bubbles: true }));
-    bottomInput.dispatchEvent(new Event("input", { bubbles: true }));
+    // Update the main meme editor preview.
+    topInput.dispatchEvent(
+      new Event("input", { bubbles: true })
+    );
+
+    bottomInput.dispatchEvent(
+      new Event("input", { bubbles: true })
+    );
 
     status.textContent =
       "😂 Funny caption ready! Check your meme preview.";
@@ -143,9 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
   generateBtn.addEventListener("click", generateCaption);
 
   categorySelect.addEventListener("change", function () {
-    if (categorySelect.value === "random") {
-      generateCaption();
-    }
+    generateCaption();
   });
 
   console.log("Funny Meme Studio loaded successfully!");
