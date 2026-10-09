@@ -4,251 +4,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111827">
-  <meta name="description" content="Create funny memes using your own photos, captions and templates. Customize and download your memes for free.">
-
+  <meta name="theme-color" content="#101226">
   <title>Meme Generator</title>
-
   <link rel="stylesheet" href="style.css">
-
-  <style>
-    .template:focus-visible,
-    .btn:focus-visible,
-    .upload-box:focus-visible {
-      outline: 3px solid #a78bfa;
-      outline-offset: 3px;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .upload-box {
-      text-align: center;
-    }
-
-    #imageInput {
-      display: none;
-    }
-
-    .status {
-      overflow-wrap: anywhere;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
 </head>
-
 <body>
-
-  <header class="header">
-    <a class="logo" href="./" aria-label="Meme Generator home">
-      😂 Meme Generator
-    </a>
-    <span class="tag">Create • Customize • Download</span>
+  <header class="app-header">
+    <h1>😂 Meme Generator</h1>
+    <p>Create, customize and download your memes!</p>
   </header>
 
-  <main class="container">
-
-    <section class="hero">
-      <h1>Create Your Own <span>Memes</span></h1>
-      <p>
-        Choose a template or upload your own photo and make something funny.
-      </p>
-    </section>
-
-    <section class="templates-section" aria-labelledby="templatesTitle">
-      <h2 id="templatesTitle">Choose a Template</h2>
-
-      <div class="templates" id="templates">
-
-        <button type="button" class="template"
-          data-emoji="😂"
-          data-top="WHEN THE EXAM IS EASY"
-          data-bottom="BUT YOU DIDN'T STUDY">
-          😂<small>Exam Mood</small>
-        </button>
-
-        <button type="button" class="template"
-          data-emoji="😎"
-          data-top="ME AFTER ONE TUTORIAL"
-          data-bottom="I AM A PROFESSIONAL NOW">
-          😎<small>Confidence</small>
-        </button>
-
-        <button type="button" class="template"
-          data-emoji="😭"
-          data-top="SALARY DAY"
-          data-bottom="BILLS THE NEXT DAY">
-          😭<small>Reality</small>
-        </button>
-
-        <button type="button" class="template"
-          data-emoji="🤯"
-          data-top="JUST ONE MORE EPISODE"
-          data-bottom="IT'S 5 AM ALREADY">
-          🤯<small>Late Night</small>
-        </button>
-
-        <button type="button" class="template"
-          data-emoji="🤣"
-          data-top="FRIEND: I KNOW A SHORTCUT"
-          data-bottom="US, LOST FOR 2 HOURS">
-          🤣<small>Friends</small>
-        </button>
-
-        <button type="button" class="template"
-          data-emoji="😴"
-          data-top="ME OPENING MY BOOK"
-          data-bottom="MY BRAIN: GOOD NIGHT">
-          😴<small>Study Time</small>
-        </button>
-
+  <main class="app-container">
+    <section class="panel">
+      <h2>Choose a Template</h2>
+      <div class="templates">
+        <button type="button" class="template-btn" data-template="bugs">🐛 Bugs</button>
+        <button type="button" class="template-btn" data-template="success">😎 Success</button>
+        <button type="button" class="template-btn" data-template="work">💻 Work</button>
+        <button type="button" class="template-btn" data-template="student">📚 Student</button>
+        <button type="button" class="template-btn" data-template="weekend">🎉 Weekend</button>
+        <button type="button" class="template-btn" data-template="custom">✨ Custom</button>
       </div>
     </section>
 
-    <section class="editor-layout">
-
-      <div class="preview-panel">
-
-        <div class="panel-heading">
-          <h2>Meme Preview</h2>
-          <span class="live-badge">LIVE</span>
-        </div>
-
-        <div class="canvas-wrap">
-          <canvas
-            id="memeCanvas"
-            width="800"
-            height="600"
-            role="img"
-            aria-label="Your meme preview">
-            Your browser does not support the canvas element.
-          </canvas>
-        </div>
-
-        <p id="status" class="status" role="status" aria-live="polite">
-          Choose a template or upload a photo.
-        </p>
-
-        <div class="download-buttons">
-          <button type="button" id="pngBtn" class="btn primary">
-            ⬇ Download PNG
-          </button>
-
-          <button type="button" id="gifBtn" class="btn secondary">
-            🎞 Download GIF
-          </button>
-
-          <button type="button" id="videoBtn" class="btn secondary">
-            🎬 Download Video
-          </button>
-        </div>
-
+    <section class="panel">
+      <h2>Meme Preview <span class="live-badge">LIVE</span></h2>
+      <div class="canvas-wrap">
+        <canvas id="c" width="600" height="600"></canvas>
       </div>
+      <p id="statusText" role="status">Ready to create your meme!</p>
 
-      <aside class="controls">
-        <h2>Customize Meme</h2>
-
-        <label class="upload-box" for="imageInput" tabindex="0">
-          <span>📷</span>
-          <strong>Upload Your Photo</strong>
-          <small>JPG, PNG or WebP · Max 20 MB</small>
-        </label>
-
-        <input
-          id="imageInput"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
-        >
-
-        <label for="topText">Top Caption</label>
-        <textarea
-          id="topText"
-          rows="2"
-          maxlength="180"
-          placeholder="Enter top text..."
-        >WHEN LIFE GIVES YOU BUGS</textarea>
-
-        <label for="bottomText">Bottom Caption</label>
-        <textarea
-          id="bottomText"
-          rows="2"
-          maxlength="180"
-          placeholder="Enter bottom text..."
-        >CALL IT A FEATURE</textarea>
-
-        <label for="fontSize">
-          Text Size: <span id="sizeValue">38</span>px
-        </label>
-        <input
-          id="fontSize"
-          type="range"
-          min="18"
-          max="64"
-          value="38"
-        >
-
-        <label for="textColor">Text Color</label>
-        <input id="textColor" type="color" value="#ffffff">
-
-        <label for="animation">Text Animation</label>
-        <select id="animation">
-          <option value="none">No Animation</option>
-          <option value="bounce">Bounce</option>
-          <option value="pulse">Pulse</option>
-        </select>
-
-        <label for="duration">GIF / Video Duration</label>
-        <select id="duration">
-          <option value="2">2 seconds</option>
-          <option value="3" selected>3 seconds</option>
-          <option value="5">5 seconds</option>
-        </select>
-
-        <label class="check-row" for="outline">
-          <input id="outline" type="checkbox" checked>
-          Black text outline
-        </label>
-
-        <label class="check-row" for="uppercase">
-          <input id="uppercase" type="checkbox" checked>
-          Uppercase captions
-        </label>
-
-        <div class="control-buttons">
-          <button type="button" id="resetBtn" class="btn secondary">
-            Reset
-          </button>
-
-          <button type="button" id="clearPhotoBtn" class="btn secondary">
-            Remove Photo
-          </button>
-        </div>
-
-      </aside>
-
+      <div class="download-buttons">
+        <button type="button" id="downloadButton">⬇️ Download PNG</button>
+        <button type="button" id="downloadGifButton">🎞️ Download GIF</button>
+        <button type="button" id="downloadVideoButton">🎬 Download Video</button>
+      </div>
     </section>
 
-    <footer>
-      <p>😂 Meme Generator — Make your own memes and share the laughter!</p>
-    </footer>
+    <section class="panel">
+      <h2>Customize Meme</h2>
 
+      <label for="imageInput">Upload Your Photo</label>
+      <input type="file" id="imageInput" accept="image/*">
+
+      <label for="topText">Top Caption</label>
+      <input id="topText" type="text" maxlength="120"
+        placeholder="Enter top caption">
+
+      <label for="bottomText">Bottom Caption</label>
+      <input id="bottomText" type="text" maxlength="120"
+        placeholder="Enter bottom caption">
+
+      <label for="textSize">Text Size</label>
+      <input id="textSize" type="range" min="20" max="64" value="36">
+      <span id="sizeValue">36 px</span>
+
+      <label for="textColor">Text Color</label>
+      <input id="textColor" type="color" value="#ffffff">
+
+      <label for="strokeColor">Outline Color</label>
+      <input id="strokeColor" type="color" value="#000000">
+
+      <label for="mood">Meme Mood</label>
+      <select id="mood">
+        <option value="funny">Funny</option>
+        <option value="sarcastic">Sarcastic</option>
+        <option value="relatable">Relatable</option>
+        <option value="motivational">Motivational</option>
+      </select>
+
+      <div class="action-buttons">
+        <button type="button" id="resetButton">🔄 Reset</button>
+        <button type="button" id="removePhotoButton">🗑️ Remove Photo</button>
+      </div>
+    </section>
   </main>
 
-  <!-- Load the GIF library before script.js -->
+  <!-- Load the GIF library BEFORE script.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
-
-  <!-- Main meme editor logic -->
   <script src="script.js"></script>
-
 </body>
 </html>
