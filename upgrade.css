@@ -1,0 +1,199 @@
+/* Meme Studio Pro — Purple Glassmorphism Upgrade */
+
+:root {
+–bg: #090714;
+–panel: rgba(24, 20, 45, 0.82);
+–purple: #9b5cff;
+–pink: #ec4899;
+–text: #f7f3ff;
+–muted: #aaa2c5;
+–border: rgba(190, 150, 255, 0.22);
+}
+
+body {
+background:
+radial-gradient(ellipse at 10% 0%, #32145b 0%, transparent 42%),
+radial-gradient(ellipse at 90% 20%, #251044 0%, transparent 40%),
+var(–bg) !important;
+color: var(–text);
+font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+font: inherit;
+}
+
+button {
+transition: transform .2s ease, box-shadow .2s ease,
+background .2s ease;
+}
+
+button:hover {
+transform: translateY(-2px);
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+outline: 2px solid var(–purple);
+outline-offset: 3px;
+}
+
+header,
+nav,
+aside,
+section,
+.panel,
+.card,
+.toolbar,
+.sidebar,
+.editor-panel,
+.control-panel {
+border-color: var(–border);
+}
+
+.panel,
+.card,
+.sidebar,
+.editor-panel,
+.control-panel {
+background: var(–panel);
+border: 1px solid var(–border);
+border-radius: 18px;
+box-shadow: 0 12px 40px rgba(0, 0, 0, .22);
+backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
+}
+
+h1,
+h2,
+h3 {
+color: var(–text);
+letter-spacing: -.025em;
+}
+
+h1 {
+background: linear-gradient(100deg, #fff, #c4a2ff 55%, #f0a4ff);
+-webkit-background-clip: text;
+background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+p,
+label,
+small {
+color: var(–muted);
+}
+
+button,
+.btn,
+.button,
+input[type=“button”],
+input[type=“submit”] {
+border: 1px solid rgba(255,255,255,.12);
+border-radius: 11px;
+color: white;
+background: linear-gradient(135deg, #8b5cf6, #c026d3);
+padding: 10px 16px;
+cursor: pointer;
+}
+
+button:hover,
+.btn:hover,
+.button:hover {
+box-shadow: 0 7px 24px rgba(155, 92, 255, .25);
+}
+
+input:not([type=“checkbox”]):not([type=“radio”]):not([type=“range”]),
+textarea,
+select {
+width: 100%;
+box-sizing: border-box;
+color: var(–text);
+background: rgba(8, 6, 20, .7);
+border: 1px solid var(–border);
+border-radius: 10px;
+padding: 11px 13px;
+}
+
+input::placeholder,
+textarea::placeholder {
+color: #817798;
+}
+
+input[type=“range”] {
+accent-color: var(–purple);
+}
+
+a {
+color: #c4a2ff;
+}
+
+img,
+canvas,
+video {
+max-width: 100%;
+}
+
+canvas {
+border-radius: 8px;
+}
+
+hr {
+border: 0;
+border-top: 1px solid var(–border);
+}
+
+::selection {
+color: white;
+background: #7540c9;
+}
+
+@media (max-width: 768px) {
+body {
+padding-left: 12px;
+padding-right: 12px;
+}
+
+.container,
+.main-container,
+.app-container {
+width: 100%;
+max-width: 100%;
+box-sizing: border-box;
+}
+
+.sidebar,
+.editor-panel,
+.control-panel,
+.panel,
+.card {
+border-radius: 14px;
+}
+
+button,
+.btn,
+.button {
+min-height: 42px;
+}
+
+input,
+textarea,
+select {
+font-size: 16px;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+scroll-behavior: auto !important;
+transition: none !important;
+animation: none !important;
+}
+}
