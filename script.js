@@ -1,6 +1,7 @@
 /* ==========================================
    MEME GENERATOR PRO
-   Photo Upload + Templates + PNG + GIF
+   Photo Upload + Templates + PNG + GIF + Video
+   GIF worker CDN fix
    ========================================== */
 "use strict";
 document.addEventListener("DOMContentLoaded", () => {
@@ -27,12 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const gifBtn = document.getElementById("gifBtn");
   const videoBtn = document.getElementById("videoBtn");
   let uploadedImage = null;
-  let animationTimer = null;
   let gifBusy = false;
-  const originalWidth = 600;
-  const originalHeight = 600;
-  canvas.width = originalWidth;
-  canvas.height = originalHeight;
+  let videoTimer = null;
+  const WIDTH = 600;
+  const HEIGHT = 600;
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
   function setStatus(message) {
     if (status) status.textContent = message;
   }
@@ -56,26 +57,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function drawPlaceholder() {
     ctx.fillStyle = "#202435";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = "bold 32px Arial";
-    ctx.fillText("😂 MEME GENERATOR", canvas.width / 2, 250);
+    ctx.fillText("😂 MEME GENERATOR", WIDTH / 2, 250);
     ctx.font = "18px Arial";
     ctx.fillStyle = "#cbd5e1";
-    ctx.fillText("Upload a photo to get started", canvas.width / 2, 300);
+    ctx.fillText("Upload a photo to get started", WIDTH / 2, 300);
   }
   function drawCoverImage(image) {
     const scale = Math.max(
-      canvas.width / image.width,
-      canvas.height / image.height
+      WIDTH / image.width,
+      HEIGHT / image.height
     );
     const width = image.width * scale;
     const height = image.height * scale;
-    const x = (canvas.width - width) / 2;
-    const y = (canvas.height - height) / 2;
-    ctx.drawImage(image, x, y, width, height);
+    ctx.drawImage(
+      image,
+      (WIDTH - width) / 2,
+      (HEIGHT - height) / 2,
+      width,
+      height
+    );
   }
   function wrapText(text, maxWidth, font) {
     ctx.font = font;
@@ -97,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function drawCaption(text, y, size) {
     if (!text) return;
     const padding = 22;
-    const maxWidth = canvas.width - padding * 2;
+    const maxWidth = WIDTH - padding * 2;
     let currentSize = size;
     let font = `900 ${currentSize}px Impact, "Arial Black", sans-serif`;
     let lines = wrapText(text, maxWidth, font);
@@ -110,47 +115,42 @@ document.addEventListener("DOMContentLoaded", () => {
       lines = wrapText(text, maxWidth, font);
     }
     const lineHeight = currentSize * 1.12;
+    const totalHeight = lines.length * lineHeight;
+    let startY = y;
+    if (y > HEIGHT / 2) {
+      startY = Math.min(y, HEIGHT - padding - totalHeight / 2);
+    } else {
+      startY = Math.max(padding + totalHeight / 2, y);
+    }
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = font;
     ctx.lineJoin = "round";
     ctx.fillStyle = textColor ? textColor.value : "#ffffff";
     ctx.strokeStyle = "#000000";
-    ctx.lineWidth = outline && !outline.checked ? 0 : Math.max(2, currentSize / 10);
-    const totalHeight = lines.length * lineHeight;
-    let startY = y;
-    if (y > canvas.height / 2) {
-      startY = Math.min(
-        y,
-        canvas.height - padding - totalHeight / 2
-      );
-    } else {
-      startY = Math.max(
-        padding + totalHeight / 2,
-        y
-      );
-    }
+    ctx.lineWidth =
+      outline && !outline.checked
+        ? 0
+        : Math.max(2, currentSize / 10);
     lines.forEach((line, index) => {
       const lineY =
         startY + (index - (lines.length - 1) / 2) * lineHeight;
       if (ctx.lineWidth > 0) {
-        ctx.strokeText(line, canvas.width / 2, lineY, maxWidth);
+        ctx.strokeText(line, WIDTH / 2, lineY, maxWidth);
       }
-      ctx.fillText(line, canvas.width / 2, lineY, maxWidth);
+      ctx.fillText(line, WIDTH / 2, lineY, maxWidth);
     });
   }
   function drawMeme() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
     if (uploadedImage) {
       drawCoverImage(uploadedImage);
     } else {
       drawPlaceholder();
     }
     const size = getFontSize();
-    const top = getText(topText);
-    const bottom = getText(bottomText);
-    drawCaption(top, size + 22, size);
-    drawCaption(bottom, canvas.height - size - 22, size);
+    drawCaption(getText(topText), size + 22, size);
+    drawCaption(getText(bottomText), HEIGHT - size - 22, size);
   }
   // PHOTO UPLOAD
   if (imageInput) {
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
       reader.readAsDataURL(file);
     });
   }
-  // LIVE TEXT AND STYLE UPDATES
+  // LIVE EDITOR UPDATES
   [
     topText,
     bottomText,
@@ -198,13 +198,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     element.addEventListener("change", drawMeme);
   });
-  // TEMPLATE BUTTONS
+  // TEMPLATES
   document.querySelectorAll(".template").forEach(button => {
     button.addEventListener("click", () => {
-      const top = button.dataset.top || button.dataset.topText || "";
-      const bottom = button.dataset.bottom || button.dataset.bottomText || "";
-      if (topText) topText.value = top;
-      if (bottomText) bottomText.value = bottom;
+      if (topText) {
+        topText.value =
+          button.dataset.top || button.dataset.topText || "";
+      }
+      if (bottomText) {
+        bottomText.value =
+          button.dataset.bottom || button.dataset.bottomText || "";
+      }
       drawMeme();
       setStatus("Template applied!");
     });
@@ -218,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setStatus("Photo cleared.");
     });
   }
-  // RESET EDITOR
+  // RESET
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       if (topText) topText.value = "";
@@ -234,35 +238,49 @@ document.addEventListener("DOMContentLoaded", () => {
       setStatus("Editor reset.");
     });
   }
+  // SHARED DOWNLOAD HELPER
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
   // DOWNLOAD PNG
   if (pngBtn) {
     pngBtn.addEventListener("click", () => {
       try {
         drawMeme();
-        const link = document.createElement("a");
-        link.download = "my-meme.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-        setStatus("PNG download started.");
+        canvas.toBlob(blob => {
+          if (!blob) {
+            setStatus("PNG export failed.");
+            return;
+          }
+          downloadBlob(blob, "my-meme.png");
+          setStatus("PNG download started.");
+        }, "image/png");
       } catch (error) {
-        console.error(error);
+        console.error("PNG error:", error);
         setStatus("PNG export failed.");
       }
     });
   }
-  // GET GIF LIBRARY
+  // GIF LIBRARY
   function getGIFConstructor() {
-    if (typeof window.GIF === "function") {
-      return window.GIF;
-    }
-    return null;
+    return typeof window.GIF === "function"
+      ? window.GIF
+      : null;
   }
   // DOWNLOAD ANIMATED GIF
   async function downloadGIF() {
     if (gifBusy) return;
     const GIFConstructor = getGIFConstructor();
     if (!GIFConstructor) {
-      setStatus("GIF library missing. Check the GIF script in index.html.");
+      setStatus("GIF library missing. Check gif.js in index.html.");
       return;
     }
     gifBusy = true;
@@ -270,54 +288,57 @@ document.addEventListener("DOMContentLoaded", () => {
     setStatus("Creating GIF... please wait.");
     let gif = null;
     let timeoutId = null;
+    let completed = false;
+    function finish(message) {
+      if (completed) return;
+      completed = true;
+      if (timeoutId) clearTimeout(timeoutId);
+      gifBusy = false;
+      if (gifBtn) gifBtn.disabled = false;
+      setStatus(message);
+    }
     try {
       const frames = 12;
       const delay = 150;
-      // The worker file must exist in the repository root.
       gif = new GIFConstructor({
         workers: 2,
-        quality: 12,
-        width: canvas.width,
-        height: canvas.height,
-        workerScript: "./gif.worker.js"
+        quality: 10,
+        width: WIDTH,
+        height: HEIGHT,
+        workerScript:
+          "https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js"
       });
-      const originalTop = getText(topText);
-      const originalBottom = getText(bottomText);
       const effect = getValue(animationSelect, "bounce");
       for (let i = 0; i < frames; i++) {
         drawMeme();
+        const size = getFontSize();
+        const top = getText(topText);
+        const bottom = getText(bottomText);
         if (effect === "bounce") {
-          const offset = Math.sin((i / frames) * Math.PI * 2) * 12;
-          const size = getFontSize();
-          drawCaption(originalTop, size + 22 + offset, size);
-          drawCaption(
-            originalBottom,
-            canvas.height - size - 22 - offset,
-            size
-          );
+          const offset =
+            Math.sin((i / frames) * Math.PI * 2) * 12;
+          drawCaption(top, size + 22 + offset, size);
+          drawCaption(bottom, HEIGHT - size - 22 - offset, size);
         } else if (effect === "pulse") {
-          const pulse = Math.sin((i / frames) * Math.PI * 2) * 4;
-          const size = getFontSize() + pulse;
-          drawCaption(originalTop, size + 22, size);
-          drawCaption(originalBottom, canvas.height - size - 22, size);
+          const pulse =
+            Math.sin((i / frames) * Math.PI * 2) * 4;
+          const newSize = size + pulse;
+          drawCaption(top, newSize + 22, newSize);
+          drawCaption(bottom, HEIGHT - newSize - 22, newSize);
         } else if (effect === "shake") {
-          const offset = (i % 2 === 0 ? -5 : 5);
-          const size = getFontSize();
+          const offset = i % 2 === 0 ? -5 : 5;
           ctx.save();
           ctx.translate(offset, 0);
-          // Redraw this frame shifted horizontally.
-          ctx.clearRect(-offset, 0, canvas.width, canvas.height);
+          // Redraw the entire frame at the shifted position.
+          ctx.fillStyle = "#202435";
+          ctx.fillRect(-offset, 0, WIDTH, HEIGHT);
           if (uploadedImage) {
             drawCoverImage(uploadedImage);
           } else {
             drawPlaceholder();
           }
-          drawCaption(originalTop, size + 22, size);
-          drawCaption(
-            originalBottom,
-            canvas.height - size - 22,
-            size
-          );
+          drawCaption(top, size + 22, size);
+          drawCaption(bottom, HEIGHT - size - 22, size);
           ctx.restore();
         }
         gif.addFrame(canvas, {
@@ -325,64 +346,45 @@ document.addEventListener("DOMContentLoaded", () => {
           delay
         });
       }
-      // Stop waiting if a worker fails to respond.
-      timeoutId = setTimeout(() => {
-        if (gifBusy) {
-          try {
-            gif.abort();
-          } catch (_) {}
-          setStatus(
-            "GIF timed out. Check gif.worker.js and refresh the page."
-          );
-          gifBusy = false;
-          if (gifBtn) gifBtn.disabled = false;
-        }
-      }, 30000);
       gif.on("finished", blob => {
-        clearTimeout(timeoutId);
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "my-animated-meme.gif";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-        setStatus("GIF created successfully!");
-        gifBusy = false;
-        if (gifBtn) gifBtn.disabled = false;
+        if (!blob || blob.size === 0) {
+          finish("GIF failed: empty file generated.");
+          return;
+        }
+        downloadBlob(blob, "my-animated-meme.gif");
+        finish("GIF created! If it did not save, open the download link in your browser.");
       });
       gif.on("abort", () => {
-        clearTimeout(timeoutId);
-        setStatus("GIF creation cancelled.");
-        gifBusy = false;
-        if (gifBtn) gifBtn.disabled = false;
+        finish("GIF creation cancelled.");
       });
       gif.on("error", error => {
-        clearTimeout(timeoutId);
-        console.error("GIF error:", error);
-        setStatus("GIF failed. Check the worker file and browser console.");
-        gifBusy = false;
-        if (gifBtn) gifBtn.disabled = false;
+        console.error("GIF render error:", error);
+        finish("GIF failed. Check internet connection and gif.js worker.");
       });
+      timeoutId = setTimeout(() => {
+        if (completed) return;
+        try {
+          gif.abort();
+        } catch (error) {
+          console.warn("Could not abort GIF:", error);
+        }
+        finish("GIF timed out. Refresh the page and try again.");
+      }, 60000);
       gif.render();
     } catch (error) {
-      if (timeoutId) clearTimeout(timeoutId);
       console.error("GIF generation error:", error);
       if (gif) {
         try {
           gif.abort();
         } catch (_) {}
       }
-      setStatus("GIF creation failed. Verify gif.worker.js is committed.");
-      gifBusy = false;
-      if (gifBtn) gifBtn.disabled = false;
+      finish("GIF creation failed. Check gif.js and worker loading.");
     }
   }
   if (gifBtn) {
     gifBtn.addEventListener("click", downloadGIF);
   }
-  // VIDEO BUTTON: export supported by browser MediaRecorder
+  // VIDEO EXPORT (WEBM)
   if (videoBtn) {
     videoBtn.addEventListener("click", () => {
       if (!canvas.captureStream || !window.MediaRecorder) {
@@ -402,48 +404,46 @@ document.addEventListener("DOMContentLoaded", () => {
             chunks.push(event.data);
           }
         };
+        recorder.onerror = event => {
+          console.error("Video recording error:", event);
+          setStatus("Video recording failed.");
+        };
         recorder.onstop = () => {
           const blob = new Blob(chunks, {
             type: recorder.mimeType || "video/webm"
           });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = "my-meme.webm";
-          link.click();
-          setTimeout(() => URL.revokeObjectURL(url), 10000);
+          downloadBlob(blob, "my-meme.webm");
           stream.getTracks().forEach(track => track.stop());
           setStatus("Video export finished.");
         };
         let frame = 0;
         const maxFrames = 30;
         recorder.start();
-        animationTimer = setInterval(() => {
+        if (videoTimer) clearInterval(videoTimer);
+        videoTimer = setInterval(() => {
           drawMeme();
-          if (frame % 2 === 0) {
-            const size = getFontSize();
-            const shift = Math.sin(frame / 3) * 8;
-            drawCaption(
-              getText(topText),
-              size + 22 + shift,
-              size
-            );
-            drawCaption(
-              getText(bottomText),
-              canvas.height - size - 22 - shift,
-              size
-            );
-          }
+          const size = getFontSize();
+          const shift = Math.sin(frame / 3) * 8;
+          drawCaption(
+            getText(topText),
+            size + 22 + shift,
+            size
+          );
+          drawCaption(
+            getText(bottomText),
+            HEIGHT - size - 22 - shift,
+            size
+          );
           frame++;
           if (frame >= maxFrames) {
-            clearInterval(animationTimer);
-            animationTimer = null;
+            clearInterval(videoTimer);
+            videoTimer = null;
             recorder.stop();
           }
         }, 100);
         setStatus("Recording meme video...");
       } catch (error) {
-        console.error(error);
+        console.error("Video export error:", error);
         setStatus("Video export failed in this browser.");
       }
     });
@@ -451,299 +451,3 @@ document.addEventListener("DOMContentLoaded", () => {
   drawMeme();
   setStatus("Ready! Upload a photo or choose a template.");
 });
-
-/* ==========================================
-   FUNNY MEME MODE — NO API REQUIRED
-   Marathi + Hinglish | Comedy + Savage Roast
-   Works with existing Meme Generator IDs
-   ========================================== */
-
-(() => {
-  "use strict";
-
-  function initFunnyMemeMode() {
-    const canvas = document.getElementById("memeCanvas");
-    const topInput = document.getElementById("topText");
-    const bottomInput = document.getElementById("bottomText");
-
-    if (!canvas || !topInput || !bottomInput) {
-      console.warn("Funny Meme Mode: Existing editor fields not found.");
-      return;
-    }
-
-    if (document.getElementById("funnyMemePanel")) return;
-
-    const captions = {
-      "College Life": [
-        ["College la time var pahochlo", "Pan lecture cancel hota 💀"],
-        ["Assignment उद्या submit आहे", "Mi अजून topic शोधतोय 😂"],
-        ["Sir: Any questions?", "Me: Sir, attendance milel ka? 🤡"],
-        ["College friends: Group study", "Actual: Group gossip 😂"],
-        ["Practical file complete?", "Cover page ekdam mast aahe 😎"],
-        ["Backlog cha tension nako", "Aplyakade confidence bharpur aahe 💀"]
-      ],
-      "Exam": [
-        ["Syllabus 100% baki", "Confidence 200% 😂"],
-        ["Exam उद्या आहे", "Abhyas उद्यापासून करणार 🤡"],
-        ["Question paper baghitla", "Aata devach vachavel 🙏"],
-        ["Friend: Kiti abhyas zala?", "Me: Pen bharpur chalavla 😂"],
-        ["Easy paper aahe mhanale", "Mag mala kay zala? 💀"],
-        ["One night before exam", "YouTube: 10 hour study music 🎧"]
-      ],
-      "Savage Roast": [
-        ["Tujha attitude baghun", "WiFi pan disconnect zala 😂"],
-        ["Tu khup special ahes", "Asa error roj yet nahi 🤡"],
-        ["Tujhi logic aikun", "Calculator ne resign dila 💀"],
-        ["Confidence tar bagh", "Talent loading... 1% 😂"],
-        ["Tu silent raha", "Mystery peksha comedy jast aahe 🤣"],
-        ["Tujha plan ek number", "Execution airplane mode var 😭"]
-      ],
-      "Friends": [
-        ["Best friend: 5 minute madhe yeto", "2 taas nantar: kuthe ahes? 😂"],
-        ["Friend la secret sangitla", "Aata purna group la mahit aahe 💀"],
-        ["Bill ala ki best friend", "Network problem madhe jato 🤡"],
-        ["Friend: Bhau, serious bolaychay", "Mag 2 taas bakchodi 😂"],
-        ["Group photo madhe", "Ek jan tari dole band karto 😭"]
-      ],
-      "Marathi": [
-        ["Aai: Abhyas zala ka?", "Mi: Ho... manaat 😂"],
-        ["Aaj pasun diet suru", "Chaha sobat biscuit chaltat na? 🤡"],
-        ["Paise save karayche hote", "Pan vadapav disla 😭"],
-        ["Mi khup mature aahe", "Fakta 2 minute raga yeto 😂"],
-        ["Udya lavkar uthnar", "Alarm la pan mahit aahe khot aahe 💀"],
-        ["Aaj kahi kaam nahi", "Pan thaklo full day 😂"]
-      ],
-      "Everyday": [
-        ["Me: Aaj lavkar zopnar", "3 AM: One last reel 🤡"],
-        ["Salary / pocket money aali", "2 divsat: RIP balance 💸"],
-        ["Phone battery 1%", "Me: Ajun ek reel baghu 😂"],
-        ["Monday motivation", "Tuesday la gayab 💀"],
-        ["Plan: Productive day", "Reality: Bed + phone 😭"],
-        ["Me opening fridge again", "Maybe new food spawned 😂"]
-      ]
-    };
-
-    const style = document.createElement("style");
-    style.textContent = `
-      #funnyMemePanel {
-        margin: 18px 0;
-        padding: 18px;
-        border: 1px solid #d8d9e8;
-        border-radius: 18px;
-        background: linear-gradient(135deg, #fff7ed, #f5f3ff);
-        color: #202033;
-        font-family: system-ui, sans-serif;
-        box-sizing: border-box;
-        width: 100%;
-      }
-      #funnyMemePanel * { box-sizing: border-box; }
-      #funnyMemePanel .fm-title {
-        font-size: 21px;
-        font-weight: 800;
-        margin-bottom: 5px;
-      }
-      #funnyMemePanel .fm-sub {
-        font-size: 13px;
-        color: #666477;
-        margin-bottom: 14px;
-      }
-      #funnyMemePanel .fm-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 9px;
-        margin-bottom: 12px;
-      }
-      #funnyMemePanel select,
-      #funnyMemePanel button {
-        min-height: 42px;
-        padding: 10px 12px;
-        border: 1px solid #d6d3e2;
-        border-radius: 10px;
-        font: inherit;
-        font-size: 14px;
-      }
-      #funnyMemePanel select {
-        flex: 1 1 145px;
-        min-width: 0;
-        background: white;
-        color: #202033;
-      }
-      #funnyMemePanel button {
-        cursor: pointer;
-        font-weight: 700;
-      }
-      #funnyGenerate {
-        background: #6d28d9;
-        color: white;
-        border-color: #6d28d9;
-        flex: 1 1 150px;
-      }
-      #funnyRandom {
-        background: #fff;
-        color: #202033;
-        flex: 1 1 130px;
-      }
-      #funnyMemePanel .fm-quick {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-      }
-      #funnyMemePanel .fm-quick button {
-        background: white;
-        color: #4c1d95;
-      }
-      #funnyMemePanel button:active {
-        transform: scale(.97);
-      }
-      #funnyMemePanel .fm-status {
-        margin-top: 12px;
-        font-size: 13px;
-        color: #51436c;
-        min-height: 18px;
-      }
-      @media (max-width: 480px) {
-        #funnyMemePanel { padding: 13px; }
-        #funnyMemePanel .fm-title { font-size: 19px; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    const panel = document.createElement("section");
-    panel.id = "funnyMemePanel";
-    panel.innerHTML = `
-      <div class="fm-title">😂 Funny Meme Studio</div>
-      <div class="fm-sub">
-        No API • No API key • Built-in Marathi + Hinglish jokes
-      </div>
-
-      <div class="fm-controls">
-        <select id="funnyCategory" aria-label="Funny meme category">
-          ${Object.keys(captions).map(category =>
-            `<option value="${category}">${category}</option>`
-          ).join("")}
-        </select>
-
-        <select id="funnyMood" aria-label="Comedy style">
-          <option value="both">Comedy + Roast 🤣</option>
-          <option value="comedy">Only Comedy 😂</option>
-          <option value="roast">Savage Roast 🔥</option>
-        </select>
-      </div>
-
-      <div class="fm-controls">
-        <button id="funnyGenerate" type="button">
-          🎲 Generate Funny Meme
-        </button>
-        <button id="funnyRandom" type="button">
-          🔀 Surprise Me
-        </button>
-      </div>
-
-      <div class="fm-quick">
-        <button type="button" data-category="College Life">🎓 College</button>
-        <button type="button" data-category="Exam">📚 Exam</button>
-        <button type="button" data-category="Savage Roast">🔥 Roast</button>
-        <button type="button" data-category="Marathi">💙 Marathi</button>
-        <button type="button" data-category="Friends">🫂 Friends</button>
-      </div>
-
-      <div id="funnyStatus" class="fm-status" aria-live="polite">
-        Select a category and generate a meme!
-      </div>
-    `;
-
-    // Place the new panel after the existing canvas.
-    canvas.insertAdjacentElement("afterend", panel);
-
-    const categorySelect = panel.querySelector("#funnyCategory");
-    const moodSelect = panel.querySelector("#funnyMood");
-    const status = panel.querySelector("#funnyStatus");
-
-    let previousIndex = -1;
-
-    function redrawExistingCanvas() {
-      // Uses the redraw function from your existing script, if available.
-      if (typeof window.drawMeme === "function") {
-        window.drawMeme();
-      } else {
-        // Trigger the existing input listeners without replacing their code.
-        topInput.dispatchEvent(new Event("input", { bubbles: true }));
-        bottomInput.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-    }
-
-    function generateMeme(randomCategory = false) {
-      let category = categorySelect.value;
-
-      if (randomCategory) {
-        const allCategories = Object.keys(captions);
-        category = allCategories[
-          Math.floor(Math.random() * allCategories.length)
-        ];
-        categorySelect.value = category;
-      }
-
-      let options = captions[category] || captions["Everyday"];
-      const mood = moodSelect.value;
-
-      if (mood === "roast") {
-        options = captions["Savage Roast"];
-      } else if (mood === "comedy" && category === "Savage Roast") {
-        options = captions["Everyday"];
-      }
-
-      let index;
-
-      if (options.length > 1) {
-        do {
-          index = Math.floor(Math.random() * options.length);
-        } while (index === previousIndex);
-      } else {
-        index = 0;
-      }
-
-      previousIndex = index;
-
-      const joke = options[index];
-      topInput.value = joke[0];
-      bottomInput.value = joke[1];
-
-      redrawExistingCanvas();
-
-      status.textContent = `🤣 New meme ready! Category: ${category}`;
-    }
-
-    panel.querySelector("#funnyGenerate").addEventListener("click", () => {
-      generateMeme(false);
-    });
-
-    panel.querySelector("#funnyRandom").addEventListener("click", () => {
-      generateMeme(true);
-    });
-
-    panel.querySelectorAll("[data-category]").forEach(button => {
-      button.addEventListener("click", () => {
-        categorySelect.value = button.dataset.category;
-        generateMeme(false);
-      });
-    });
-
-    // Update captions using the existing editor's normal input events.
-    topInput.addEventListener("input", () => {
-      status.textContent = "Caption edited ✍️";
-    });
-
-    bottomInput.addEventListener("input", () => {
-      status.textContent = "Caption edited ✍️";
-    });
-
-    console.log("Funny Meme Studio loaded successfully!");
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initFunnyMemeMode);
-  } else {
-    initFunnyMemeMode();
-  }
-})();
-
