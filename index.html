@@ -3,69 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MemeStudio - Free Meme Generator</title>
+  <title>Desi Meme Studio</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <h1>😂 Meme<span>Studio</span></h1>
-    <p>Free Meme Generator · No API Key</p>
+    <h2>😂 Desi<span>Meme</span>Studio</h2>
+    <span class="tag">COLLEGE EDITION</span>
   </header>
+
   <main class="container">
-    <section class="editor panel">
-      <h2>✨ Create Your Meme</h2>
-      <label for="prompt">Describe your meme</label>
-      <textarea id="prompt" maxlength="200">When the teacher announces a surprise test</textarea>
-      <label>Choose a mood</label>
-      <div class="moods">
-        <button class="mood active" data-mood="funny">😂 Funny</button>
-        <button class="mood" data-mood="sarcastic">😏 Sarcastic</button>
-        <button class="mood" data-mood="relatable">🥲 Relatable</button>
-        <button class="mood" data-mood="savage">🔥 Savage</button>
-      </div>
-      <label>Ready-made templates</label>
-      <div id="templateGrid" class="templates"></div>
-      <label for="topText">Top caption</label>
-      <input id="topText" value="TEACHER: SURPRISE TEST TODAY">
-      <label for="bottomText">Bottom caption</label>
-      <input id="bottomText" value="MY SOUL LEFT THE BODY 💀">
-      <div class="settings">
-        <div>
-          <label for="textColor">Text colour</label>
-          <input id="textColor" type="color" value="#ffffff">
-        </div>
-        <div class="font-setting">
-          <label for="fontSize">Font size: <span id="fontSizeValue">34 px</span></label>
-          <input id="fontSize" type="range" min="18" max="56" value="34">
-        </div>
-      </div>
-      <div class="checks">
-        <label><input id="uppercase" type="checkbox" checked> Uppercase</label>
-        <label><input id="outline" type="checkbox" checked> Black outline</label>
-      </div>
-      <button id="generateBtn" class="primary">✨ Make My Meme</button>
-      <button id="resetBtn" class="secondary">↺ Reset</button>
-      <hr>
-      <h3>Find real reaction photos</h3>
-      <p class="hint">Internet required. Photo availability and licences vary.</p>
-      <button id="searchPhotos" class="secondary">🔎 Search Free Photos</button>
-      <div id="photoResults" class="photo-results"></div>
+    <section class="hero">
+      <p>PADHAI KAM · MEMES ZYADA 😂</p>
+      <h1>Make Your Desi College Memes</h1>
+      <p>Choose a template, edit captions, animate and download.</p>
     </section>
-    <section class="preview panel">
-      <h2>🎨 Your Meme</h2>
-      <div class="canvas-wrap">
-        <canvas id="memeCanvas" width="900" height="650"></canvas>
-      </div>
-      <button id="downloadBtn" class="primary">⬇ Download PNG</button>
-      <button id="copyBtn" class="secondary">Copy Captions</button>
-      <p id="photoCredit" class="hint">
-        Built-in template — no external image needed.
-      </p>
-      <a id="sourceLink" class="hidden" target="_blank" rel="noopener noreferrer">View photo source ↗</a>
-      <p id="status" role="status">Ready to make something funny.</p>
+
+    <section class="panel">
+      <h2>🔥 Ready-Made Templates</h2>
+      <p class="muted">Select a college meme below</p>
+      <div id="templateGrid" class="template-grid"></div>
     </section>
+
+    <section class="editor">
+      <div class="panel">
+        <h2>✍️ Customize Meme</h2>
+
+        <label for="topText">Top Caption</label>
+        <textarea id="topText" rows="2">OPENING QUESTION PAPER</textarea>
+
+        <label for="bottomText">Bottom Caption</label>
+        <textarea id="bottomText" rows="2">YE KYA HAI BHAI?!</textarea>
+
+        <div class="fields">
+          <div>
+            <label for="fontSize">Text Size</label>
+            <input id="fontSize" type="range" min="18" max="48" value="32">
+            <span id="fontSizeValue">32px</span>
+          </div>
+          <div>
+            <label for="textColor">Text Colour</label>
+            <input id="textColor" type="color" value="#ffffff">
+          </div>
+        </div>
+
+        <label for="animation">Text Animation</label>
+        <select id="animation">
+          <option value="bounce">Bounce</option>
+          <option value="pulse">Pulse</option>
+          <option value="shake">Shake</option>
+          <option value="slide">Slide</option>
+          <option value="none">No Animation</option>
+        </select>
+
+        <label for="duration">Export Duration</label>
+        <select id="duration">
+          <option value="3">3 Seconds</option>
+          <option value="5" selected>5 Seconds</option>
+          <option value="8">8 Seconds</option>
+        </select>
+
+        <div class="checks">
+          <label><input id="outline" type="checkbox" checked> Black outline</label>
+          <label><input id="uppercase" type="checkbox" checked> Uppercase</label>
+        </div>
+
+        <div class="button-row">
+          <button id="resetBtn" class="secondary">Reset Captions</button>
+          <button id="downloadPng" class="primary">Download PNG</button>
+        </div>
+
+        <div class="button-row">
+          <button id="downloadGif" class="secondary">Export GIF</button>
+          <button id="downloadVideo" class="primary">Export Video</button>
+        </div>
+
+        <p id="status" class="status">Choose a template to start.</p>
+        <p class="hint">GIF needs an internet connection to load its free library. Video exports as WebM if supported by your browser. No paid API required.</p>
+      </div>
+
+      <div class="panel preview">
+        <div class="preview-heading">
+          <h2>🎬 Live Preview</h2>
+          <span class="live">● LIVE</span>
+        </div>
+        <canvas id="memeCanvas" width="720" height="720"></canvas>
+        <div class="preview-footer">
+          <span id="currentTemplate">Question Paper Panic</span>
+          <span>720 × 720</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>Made for college students, backbenchers and notes-bhejde-bro gang 😂</footer>
   </main>
-  <footer>Made for meme lovers ❤️ · Free browser-based tool</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
