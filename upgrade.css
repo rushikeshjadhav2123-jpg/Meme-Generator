@@ -633,4 +633,45 @@ max-width: 100% !important;
 max-width: 100% !important;
 }
 }
+/* ===== MOBILE LAYOUT OVERRIDE ===== */
+@media screen and (max-width: 650px) {
+.app-container {
+display: flex !important;
+flex-direction: column !important;
+width: 100% !important;
+}
+
+.tool-tabs {
+display: flex !important;
+flex-direction: row !important;
+width: 100% !important;
+overflow-x: auto !important;
+}
+
+.sidebar {
+display: block;
+width: 100% !important;
+max-width: 100% !important;
+}
+
+.canvas-workspace {
+display: flex !important;
+width: 100% !important;
+min-height: auto !important;
+align-items: center !important;
+justify-content: flex-start !important;
+padding: 12px 8px !important;
+overflow: hidden !important;
+}
+
+.canvas-card {
+width: 100% !important;
+max-width: 100% !important;
+min-width: 0 !important;
+}
+
+.canvas-card .canvas-container {
+max-width: 100% !important;
+}
+}
 
